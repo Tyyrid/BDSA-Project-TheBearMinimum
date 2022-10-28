@@ -23,11 +23,10 @@ namespace GitInsight
                 }
                 else if (!LibGit2Sharp.Repository.IsValid(pathInput))
                 {
-                    Console.WriteLine();
+                    Console.WriteLine("LibGit2Sharp says path is invalid");
                 }
                 else
                 {
-                    
                     validPathFound = true;
                 }
             }
@@ -74,7 +73,17 @@ namespace GitInsight
 
         public static void authorMode(IEnumerable<Commit> commits) {
             Console.WriteLine(commits.GroupBy(c => c.Author.Name, c => c.Author.When.Date));
-            //var authors = commits.GroupBy(c => c.
+            var authors = commits.GroupBy(c => c.Author.Name);
+            var output = "";
+            foreach (var author in authors)
+            {
+                output += author.First().Author.Name + "\n";
+                var dates = author.GroupBy(c => c.Author.When.Date);   
+                foreach (var date in dates)
+                {
+                    output += date.Count() + " " + date.First().Author.When.Date + "\n";
+                }
+            }
         
         }
     }
