@@ -42,13 +42,11 @@ namespace GitInsight
                 {
                     Console.WriteLine("Running in frequency mode");
                     frequencyMode(new Repository(pathInput).Commits);
-                    break;
                 }
                 else if (modeInput == "a")
                 {
                     Console.WriteLine("Running in author mode");
                     authorMode(new Repository(pathInput).Commits);
-                    break;
                 }
                 else if (modeInput == "q")
                 {
@@ -72,7 +70,6 @@ namespace GitInsight
         }
 
         public static void authorMode(IEnumerable<Commit> commits) {
-            Console.WriteLine(commits.GroupBy(c => c.Author.Name, c => c.Author.When.Date));
             var authors = commits.GroupBy(c => c.Author.Name);
             var output = "";
             foreach (var author in authors)
@@ -84,7 +81,7 @@ namespace GitInsight
                     output += date.Count() + " " + date.First().Author.When.Date + "\n";
                 }
             }
-        
+            Console.WriteLine(output);
         }
     }
 }

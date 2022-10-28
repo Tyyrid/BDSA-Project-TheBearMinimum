@@ -1,6 +1,3 @@
-using Xunit;
-using GitInsight;
-using FluentAssertions;
 
 namespace GitInsight.Test;
 
@@ -21,8 +18,10 @@ public class UnitTest1
     public void Does_substitute_work()
     {
         Commit commit = Substitute.For<Commit>();
-        commit.Author.Name.Returns("Kristian");
+        commit.Author.Returns(new Signature("Kristian", "Kristian@ITU.dk", DateTimeOffset.MaxValue));
         repository.Head.Tip.Returns(commit);
+
+        repository.commits
 
         var testresult = repository.Head.Tip.Author.Name;
         testresult.Should().Be("Kristian");
