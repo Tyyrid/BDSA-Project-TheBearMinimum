@@ -1,87 +1,53 @@
-﻿// See https://aka.ms/new-console-template for more information
-//Console.WriteLine("Hello, World!");
+﻿using FluentArgs;
 
-namespace GitInsight
-{
-    public class Program
+
+FluentArgsBuilder.New()
+    .DefaultConfigs()
+    .Parameter<DirectoryInfo>("-r", "--repo")
+        .WithValidation(repo => repo.Exists, "Directory does not exist")
+        .IsRequired()
+    .Parameter<Mode>("-m", "--mode")
+        .WithDescription("Which display mode to use.")
+        .IsOptional()
+    .Call(mode => repoInfo =>
     {
-        public static void Main(string[] args)
+        Repository repo;
+        try
         {
-            Console.WriteLine("Please input the path of a valid git project:");
-            string? pathInput = "";
-            var validPathFound = false;
-            while(!validPathFound)
-            {
-                pathInput = Console.ReadLine();
-                if (!Directory.Exists(pathInput))
-                {
-                    Console.WriteLine("Path does not exist. Please enter a valid path");
-                }
-                else if (!Directory.Exists(pathInput + "/.git"))
-                {
-                    Console.WriteLine("Could not find .git folder. Please enter a path connected to git");
-                }
-                else if (!LibGit2Sharp.Repository.IsValid(pathInput))
-                {
-                    Console.WriteLine("LibGit2Sharp says path is invalid");
-                }
-                else
-                {
-                    validPathFound = true;
-                }
-            }
-            
-            
-            string? modeInput = "";
-            while (modeInput != "q")
-            {
-                Console.Write("Commit frequency(f) or commit author(a) mode or quit(q)?: ");
-                modeInput = Console.ReadLine();
-
-                if (modeInput == "f")
-                {
-                    Console.WriteLine("Running in frequency mode");
-                    frequencyMode(new Repository(pathInput).Commits);
-                }
-                else if (modeInput == "a")
-                {
-                    Console.WriteLine("Running in author mode");
-                    authorMode(new Repository(pathInput).Commits);
-                }
-                else if (modeInput == "q")
-                {
-                    Console.WriteLine("Program closing");
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input");
-                }
-            }
+            repo = new Repository(repoInfo.ToString());
+        }
+        catch (RepositoryNotFoundException ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Task.CompletedTask;
         }
 
-        public static void frequencyMode(IEnumerable<Commit> commits) {
-            var dates = commits.GroupBy(c => c.Author.When.Date);   
-            string temp = "";
-            foreach (var date in dates)
-            {
-                temp += date.Count() + " " + date.First().Author.When.Date + "\n";
-            }
-                Console.Write(temp);
+        switch (mode)
+        {
+            case Mode.Author:
+                AuthorFrequency(repo.Commits).ToList().ForEach(a =>
+                {
+                    Console.WriteLine(a.Author);
+                    Print(a.Frequency);
+                    Console.WriteLine();
+                });
+                break;
+            case Mode.Frequency:
+                Print(Frequency(repo.Commits));
+                break;
         }
 
-        public static void authorMode(IEnumerable<Commit> commits) {
-            var authors = commits.GroupBy(c => c.Author.Name);
-            var output = "";
-            foreach (var author in authors)
-            {
-                output += author.First().Author.Name + "\n";
-                var dates = author.GroupBy(c => c.Author.When.Date);   
-                foreach (var date in dates)
-                {
-                    output += date.Count() + " " + date.First().Author.When.Date + "\n";
-                }
-            }
-            Console.WriteLine(output);
-        }
-    }
-}
+        return Task.CompletedTask;
+    })
+    .Parse(args);
+
+IEnumerable<(string Author, IEnumerable<(int, DateTime)> Frequency)> AuthorFrequency(IEnumerable<Commit> commits)
+    => commits.GroupBy(c => c.Author.Name).OrderBy(g => g.Key).Select(g => (g.Key, Frequency(g)));
+
+IEnumerable<(int Count, DateTime When)> Frequency(IEnumerable<Commit> commits)
+    => commits.GroupBy(c => c.Author.When.Date).Select(g => (g.Count(), g.Key));
+
+void Print(IEnumerable<(int Count, DateTime When)> frequency)
+    => frequency.OrderByDescending(f => f.When).ToList().ForEach(f => Console.WriteLine($"\t{f.Count} {f.When:yyyy-MM-dd}"));
+
+enum Mode { Frequency, Author }
