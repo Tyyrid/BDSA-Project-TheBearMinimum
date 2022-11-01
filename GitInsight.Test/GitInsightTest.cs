@@ -60,7 +60,7 @@ public class GitInsightTest
     {
         // Given
         using var writer = new StringWriter();
-        Console.SetOut(writer);
+        Console.SetError(writer);
 
         // When
         // Only works when '..' is not a git directory

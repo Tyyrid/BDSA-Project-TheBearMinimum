@@ -18,7 +18,7 @@ FluentArgsBuilder.New()
         }
         catch (RepositoryNotFoundException ex)
         {
-            Console.WriteLine(ex.Message);
+            Console.Error.WriteLine(ex.Message);
             return Task.CompletedTask;
         }
 
