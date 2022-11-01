@@ -1,6 +1,7 @@
 namespace GitInsight;
 
-public static class Extenstions {
+public static class Extenstions
+{
     public static IEnumerable<(string Author, IEnumerable<(int, DateTime)> Frequency)> AuthorFrequency(this IEnumerable<Commit> commits)
         => commits.GroupBy(c => c.Author.Name).OrderBy(g => g.Key).Select(g => (g.Key, Frequency(g)));
 
