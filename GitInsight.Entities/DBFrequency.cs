@@ -6,5 +6,5 @@ public class DBFrequency
     public int Frequency { get; set; }
     public DateTime Date { get; set; }
     public int DBCommitId { get; set; }
-    public DBCommit DBCommit { get; set; }
+    public DBCommit DBCommit { get; set; } = null!;
 }

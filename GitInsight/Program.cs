@@ -1,5 +1,9 @@
 ﻿using FluentArgs;
 
+//dotnet run --repo 'path'
+//hvis path indeholder mellemrum, skal path skrives: "path"
+// --mode author for author mode
+// --mode frequency for frequency mode (default)
 
 FluentArgsBuilder.New()
     .DefaultConfigs()
