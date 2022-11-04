@@ -28,6 +28,7 @@ public class GitInsightContext : DbContext
 
         modelBuilder.Entity<DBFrequency>().HasKey(f => new { f.DBCommitId, f.Date });
         modelBuilder.Entity<DBFrequency>().HasOne(f => f.DBCommit).WithMany(c => c.Frequencies);
+        
 
     }
 }

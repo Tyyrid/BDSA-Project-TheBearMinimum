@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Test", "GitInsig
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Entities", "GitInsight.Entities\GitInsight.Entities.csproj", "{8A28C168-5425-4D51-925A-AE887702F91F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Core", "GitInsight.Core\GitInsight.Core.csproj", "{8A28C168-5425-4D51-925A-AE887702F91F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitInsight.Entities.Migrations
 {
     [DbContext(typeof(GitInsightContext))]
-    [Migration("20221101142556_InitialCreate")]
+    [Migration("20221104115759_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
