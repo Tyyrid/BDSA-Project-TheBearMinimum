@@ -6,7 +6,8 @@ namespace GitInsight.Entities;
 
 public class GitInsightContext : DbContext
 {
-    public DbSet<DBCommit> DBCommit { get; set; } = null!;
+    public virtual DbSet<DBCommit> DBCommits { get; set; } = null!;
+    public virtual DbSet<DBFrequency> DBFrequencies { get; set; } = null!;
 
     public string DbPath { get; }
 

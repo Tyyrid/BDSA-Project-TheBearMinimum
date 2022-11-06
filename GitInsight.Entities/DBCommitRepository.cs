@@ -11,7 +11,20 @@ public class DBCommitRepository : IDBCommitRepository
 
     public (Response Response, int commitId) Create(DBCommitCreateDTO commit)
     {
-        throw new NotImplementedException();
+        //If commidId exists in database do nothing and return last analyze
+        if (context.DBCommits.Where(c => c.CommitId.Equals(commit.CommitId)).Any())
+        {
+            return (Response.Conflict, commit.CommitId);
+        }
+        //Create new DBCommit
+        DBCommit c = new DBCommit();
+        c.CommitId = commit.CommitId;
+        c.Author = commit.Author;
+        c.GitRepository = commit.GitRepository;
+        //add to context and update database
+        context.DBCommits.Add(c);
+        context.SaveChanges();
+        return (Response.Created, c.CommitId);
     }
 
     public DBCommitDTO Read(int commitId)
