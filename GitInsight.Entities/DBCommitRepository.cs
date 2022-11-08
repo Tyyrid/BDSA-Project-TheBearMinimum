@@ -20,10 +20,7 @@ public class DBCommitRepository : IDBCommitRepository
             }
         }
         //Create new DBCommit
-        DBCommit c = new DBCommit();
-        c.CommitId = commit.CommitId;
-        c.Author = commit.Author;
-        c.GitRepository = commit.GitRepository;
+        DBCommit c = new DBCommit(commit.CommitId, commit.Author!, commit.GitRepository);
         //add to context and update database
         context.DBCommits.Add(c);
         context.SaveChanges();

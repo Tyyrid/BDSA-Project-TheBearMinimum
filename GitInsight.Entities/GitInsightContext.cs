@@ -6,22 +6,11 @@ namespace GitInsight.Entities;
 
 public class GitInsightContext : DbContext
 {
-    public virtual DbSet<DBCommit> DBCommits { get; set; } = null!;
-    public virtual DbSet<DBFrequency> DBFrequencies { get; set; } = null!;
 
-    public string DbPath { get; }
-
-    public GitInsightContext()
-    {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        DbPath = System.IO.Path.Join(path, "blogging.db");
-    }
-
-    // The following configures EF to create a Sqlite database file in the
-    // special "local" folder for your platform.
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite($"Data Source={DbPath}");
+    public DbSet<DBCommit> DBCommits => Set<DBCommit>();
+    public GitInsightContext(DbContextOptions<GitInsightContext> options)
+        : base(options)
+    {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

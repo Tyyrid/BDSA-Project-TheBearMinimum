@@ -9,4 +9,13 @@ public class DBCommit
     public string? Author { get; set; }
     public string GitRepository { get; set; } = null!;
     public virtual ICollection<DBFrequency> Frequencies { get; set; } = new List<DBFrequency>();
+
+
+    public DBCommit(){}
+    public DBCommit(int _commitID, string _Author, string _GitRepository){  
+        CommitId = _commitID;
+        Author = _Author;
+        GitRepository = _GitRepository;
+    }
+
 }
