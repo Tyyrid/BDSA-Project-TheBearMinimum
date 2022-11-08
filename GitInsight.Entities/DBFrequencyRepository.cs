@@ -24,14 +24,22 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         return(Created, f.DBAnalysisId);
     }
 
-    public DBFrequencyDTO Find(int frequencyId)
+    public DBFrequencyDTO Find(int analysisId, DateTime Date)
     {
+        var existing = context.DBFrequencies.Where(f => f.DBAnalysisId.Equals(analysisId)
+                        && f.Date.Equals(Date)).FirstOrDefault();
 
-        throw new NotImplementedException();
+        if (existing is null) return null!;
+        return new DBFrequencyDTO(existing.DBAnalysisId, existing.Date, existing.Frequency);
     }
 
     public IReadOnlyCollection<DBFrequencyDTO> Read()
     {
-        throw new NotImplementedException();
+        var allFrequencies = context.DBFrequencies.OrderBy(f => f.Date)
+                                .Select(fre => new DBFrequencyDTO(
+                                        fre.DBAnalysisId,
+                                        fre.Date,
+                                        fre.Frequency)).ToList();
+        return allFrequencies.AsReadOnly();
     }
 }

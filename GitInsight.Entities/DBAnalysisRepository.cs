@@ -29,6 +29,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         return (Created, c.Id);
     }
 
+    //Ville vi ikke søge på analysisId?
     public DBAnalysisDTO Find(int commitId, string gitRepository)
     {
         var commit = context.DBAnalysis_s.Where(r => r.GitRepository.Equals(gitRepository) && r.LatestCommitId.Equals(commitId)).FirstOrDefault();
@@ -37,6 +38,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         return new DBAnalysisDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
     }
 
+    //måske sortere på analysisId?
     public IReadOnlyCollection<DBAnalysisDTO> Read()
     {
         var commits = from c in context.DBAnalysis_s
