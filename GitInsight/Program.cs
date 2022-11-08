@@ -1,8 +1,12 @@
 ﻿using FluentArgs;
+using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using GitInsight.Entities;
 
 //dotnet run --repo 'path'
 //hvis path indeholder mellemrum, skal path skrives: "path"
-// --mode author for author mode
+// --mode author for author m½ode
 // --mode frequency for frequency mode (default)
 
 FluentArgsBuilder.New()
@@ -25,6 +29,20 @@ FluentArgsBuilder.New()
             Console.Error.WriteLine(ex.Message);
             return Task.CompletedTask;
         }
+
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<Program>()
+            .Build();
+        var connectionString = configuration.GetConnectionString("ConnectionString");
+
+        using var connection = new SqlConnection(connectionString);
+
+        var optionsBuilder = new DbContextOptionsBuilder<GitInsightContext>();
+        optionsBuilder.UseSqlServer(connectionString);
+
+        var options = optionsBuilder.Options;
+
+        using var context = new GitInsightContext(options);
 
         switch (mode)
         {
