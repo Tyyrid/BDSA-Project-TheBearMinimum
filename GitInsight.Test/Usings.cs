@@ -1,4 +1,4 @@
-global using GitInsight;
+global using GitInsight.Core;
 global using NSubstitute;
 global using LibGit2Sharp;
 global using Xunit;
