@@ -1,15 +1,15 @@
 namespace GitInsight.Entities;
 
-public class DBCommitRepository : IDBCommitRepository
+public class DBAnalysisRepository : IDBAnalysisRepository
 {
     readonly GitInsightContext context;
 
-    public DBCommitRepository(GitInsightContext context) {
+    public DBAnalysisRepository(GitInsightContext context) {
         this.context = context;
     }
 
 
-    public (Response response, int latestCommitId) Create(DBCommitCreateDTO commit)
+    public (Response response, int latestCommitId) Create(DBAnalysisCreateDTO commit)
     {
         //If commidId exists in database do nothing and return last analyze
         if (context.DBAnalysis_s.Where(c => c.LatestCommitId.Equals(commit.LatestCommitId)).Any())
@@ -29,19 +29,19 @@ public class DBCommitRepository : IDBCommitRepository
         return (Created, c.Id);
     }
 
-    public DBCommitDTO Find(int commitId, string gitRepository)
+    public DBAnalysisDTO Find(int commitId, string gitRepository)
     {
         var commit = context.DBAnalysis_s.Where(r => r.GitRepository.Equals(gitRepository) && r.LatestCommitId.Equals(commitId)).FirstOrDefault();
         if(commit is null) return null!;
         //if(commit.Author is null) commit.Author = "";
-        return new DBCommitDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
+        return new DBAnalysisDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
     }
 
-    public IReadOnlyCollection<DBCommitDTO> Read()
+    public IReadOnlyCollection<DBAnalysisDTO> Read()
     {
         var commits = from c in context.DBAnalysis_s
                       orderby c.LatestCommitId
-                      select new DBCommitDTO(c.Id, c.LatestCommitId, c.Author!, c.GitRepository);
+                      select new DBAnalysisDTO(c.Id, c.LatestCommitId, c.Author!, c.GitRepository);
         return commits.ToArray();
     }
 }

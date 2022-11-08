@@ -1,9 +1,9 @@
 namespace GitInsight.Test;
-public class DBCommitRepositoryTest : IDisposable
+public class DBAnalysisRepositoryTest : IDisposable
 {
     private readonly GitInsightContext context;
-    private readonly DBCommitRepository repository;
-    public DBCommitRepositoryTest(){
+    private readonly DBAnalysisRepository repository;
+    public DBAnalysisRepositoryTest(){
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         var builder = new DbContextOptionsBuilder<GitInsightContext>();
@@ -19,13 +19,13 @@ public class DBCommitRepositoryTest : IDisposable
         _context.SaveChanges();
 
         context = _context;
-        repository = new DBCommitRepository(context);
+        repository = new DBAnalysisRepository(context);
     }
 
     [Fact]
     public void Create_given_Commit_returns_Created_Commit_Id()
     {
-        var (response, created) = repository.Create(new DBCommitCreateDTO(3, "Kristian", "userName/repositoryName"));
+        var (response, created) = repository.Create(new DBAnalysisCreateDTO(3, "Kristian", "userName/repositoryName"));
         
         response.Should().Be(Created);
 
@@ -35,7 +35,7 @@ public class DBCommitRepositoryTest : IDisposable
     [Fact]
     public void Create_given_existing_Commit_returns_Confilt_and_Commit_Id()
     {
-        var (response, created) = repository.Create(new DBCommitCreateDTO(2, "Kristian", "userName/repositoryName"));
+        var (response, created) = repository.Create(new DBAnalysisCreateDTO(2, "Kristian", "userName/repositoryName"));
         
         response.Should().Be(Response.Conflict);
 
@@ -47,7 +47,7 @@ public class DBCommitRepositoryTest : IDisposable
     {
         var commit = repository.Find(2, "userName/repositoryName");
 
-        commit.Should().Be(new DBCommitDTO(1, 2, "Kristian", "userName/repositoryName"));
+        commit.Should().Be(new DBAnalysisDTO(1, 2, "Kristian", "userName/repositoryName"));
     }
 
     [Fact]
@@ -55,8 +55,8 @@ public class DBCommitRepositoryTest : IDisposable
     {
         var result = repository.Read();
         var commits = result.ToArray(); 
-        commits[0].Should().Be(new DBCommitDTO(1, 2, "Kristian", "userName/repositoryName"));
-        commits[1].Should().Be(new DBCommitDTO(2, 5, "Jonas", "userName/repositoryName"));
+        commits[0].Should().Be(new DBAnalysisDTO(1, 2, "Kristian", "userName/repositoryName"));
+        commits[1].Should().Be(new DBAnalysisDTO(2, 5, "Jonas", "userName/repositoryName"));
     }
 
     
