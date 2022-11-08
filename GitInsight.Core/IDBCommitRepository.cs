@@ -2,8 +2,8 @@ namespace GitInsight.Core;
 
 public interface IDBCommitRepository
 {
-    (Response Response, int commitId) Create(DBCommitCreateDTO commit);
-    DBCommitDTO Find(int commitId);
+    (Response response, int latestCommitId) Create(DBCommitCreateDTO commit);
+    DBCommitDTO Find(int commitId, string gitRepository);
     IReadOnlyCollection<DBCommitDTO> Read();
     
 }

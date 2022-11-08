@@ -12,9 +12,9 @@ public class DBCommitRepositoryTest : IDisposable
         var _context = new GitInsightContext(builder.Options);
         _context.Database.EnsureCreated();
         
-        var commit1 = new DBCommit(2, "Kristian", "userName/repositoryName");
-        var commit2 = new DBCommit(5, "Jonas", "userName/repositoryName");
-        _context.DBCommits.AddRange(commit1, commit2);
+        var commit1 = new DBAnalysis(2, "Kristian", "userName/repositoryName");
+        var commit2 = new DBAnalysis(5, "Jonas", "userName/repositoryName");
+        _context.DBAnalysis_s.AddRange(commit1, commit2);
 
         _context.SaveChanges();
 
@@ -39,13 +39,13 @@ public class DBCommitRepositoryTest : IDisposable
         
         response.Should().Be(Response.Conflict);
 
-        created.Should().Be(2);
+        created.Should().Be(1);
     }
 
     [Fact]
     public void Find_commit_1()
     {
-        var commit = repository.Find(1);
+        var commit = repository.Find(2, "userName/repositoryName");
 
         commit.Should().Be(new DBCommitDTO(1, 2, "Kristian", "userName/repositoryName"));
     }

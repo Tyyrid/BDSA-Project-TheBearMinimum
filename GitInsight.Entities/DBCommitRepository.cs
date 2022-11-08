@@ -9,36 +9,39 @@ public class DBCommitRepository : IDBCommitRepository
     }
 
 
-    public (Response Response, int commitId) Create(DBCommitCreateDTO commit)
+    public (Response response, int latestCommitId) Create(DBCommitCreateDTO commit)
     {
         //If commidId exists in database do nothing and return last analyze
-        if (context.DBCommits.Where(c => c.CommitId.Equals(commit.CommitId)).Any())
+        if (context.DBAnalysis_s.Where(c => c.LatestCommitId.Equals(commit.LatestCommitId)).Any())
         {
-            if(/*commit.Author != null && */context.DBCommits.Where(a => a.Author!.Equals(commit.Author)).Any())
+            if(context.DBAnalysis_s.Where(a => a.Author!.Equals(commit.Author)).Any())
             {
-                return (Response.Conflict, commit.CommitId);
+                var existing = Find(commit.LatestCommitId, commit.GitRepository);
+                return (Conflict, existing.Id);
             }
+            
         }
         //Create new DBCommit
-        DBCommit c = new DBCommit(commit.CommitId, commit.Author!, commit.GitRepository);
+        DBAnalysis c = new DBAnalysis(commit.LatestCommitId, commit.Author!, commit.GitRepository);
         //add to context and update database
-        context.DBCommits.Add(c);
+        context.DBAnalysis_s.Add(c);
         context.SaveChanges();
-        return (Response.Created, c.CommitId);
+        return (Created, c.Id);
     }
 
-    public DBCommitDTO Find(int commitId)
+    public DBCommitDTO Find(int commitId, string gitRepository)
     {
-        var commit = context.DBCommits.Find(commitId);
+        var commit = context.DBAnalysis_s.Where(r => r.GitRepository.Equals(gitRepository) && r.LatestCommitId.Equals(commitId)).FirstOrDefault();
         if(commit is null) return null!;
-        return new DBCommitDTO(commit.Id, commit.CommitId, commit.Author!, commit.GitRepository);
+        //if(commit.Author is null) commit.Author = "";
+        return new DBCommitDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
     }
 
     public IReadOnlyCollection<DBCommitDTO> Read()
     {
-        var commits = from c in context.DBCommits
-                      orderby c.CommitId
-                      select new DBCommitDTO(c.Id, c.CommitId, c.Author!, c.GitRepository);
+        var commits = from c in context.DBAnalysis_s
+                      orderby c.LatestCommitId
+                      select new DBCommitDTO(c.Id, c.LatestCommitId, c.Author!, c.GitRepository);
         return commits.ToArray();
     }
 }

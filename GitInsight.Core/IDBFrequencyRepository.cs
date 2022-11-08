@@ -2,8 +2,8 @@ namespace GitInsight.Core;
 
 public interface IDBFrequencyRepository
 {
-    (Response Response, int frequencyId) Create(DBFrequencyCreateDTO frequency);
-    DBFrequencyDTO Find(int frequencyId);
+    (Response response, int analysisId) Create(DBFrequencyCreateDTO frequency);
+    DBFrequencyDTO Find(int analysisId);
     IReadOnlyCollection<DBFrequencyDTO> Read();
     
 }

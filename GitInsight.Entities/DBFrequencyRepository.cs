@@ -9,29 +9,24 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         this.context = context;
     }
 
-    public (Response Response, int frequencyId) Create(DBFrequencyCreateDTO frequency)
+    public (Response response, int analysisId) Create(DBFrequencyCreateDTO frequency)
     {
-        if(context.DBFrequencies.Where(f => f.DBCommitId.Equals(frequency.DBCommitId)).Any()) 
+        if (context.DBFrequencies.Where(f => f.DBAnalysisId.Equals(frequency.DBAnalysisId)
+            && f.Date.Equals(frequency.Date)).Any())
         {
-            //tjek for sidste dato
-            /*if() 
-            {
 
-            }*/
+            return (Conflict, frequency.DBAnalysisId);
         }
 
-            DBFrequency f = new DBFrequency();
-            f.Frequency = frequency.Frequency;
-            f.Date = frequency.Date;
-            f.DBCommitId = frequency.DBCommitId;
-        
-
-
-        throw new NotImplementedException();
+        DBFrequency f = new DBFrequency(frequency.DBAnalysisId, frequency.Date, frequency.Frequency);
+        context.DBFrequencies.Add(f);
+        context.SaveChanges();
+        return(Created, f.DBAnalysisId);
     }
 
     public DBFrequencyDTO Find(int frequencyId)
     {
+
         throw new NotImplementedException();
     }
 
