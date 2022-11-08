@@ -8,6 +8,7 @@ public class GitInsightContext : DbContext
 {
 
     public DbSet<DBCommit> DBCommits => Set<DBCommit>();
+    public DbSet<DBFrequency> DBFrequencies => Set<DBFrequency>();
     public GitInsightContext(DbContextOptions<GitInsightContext> options)
         : base(options)
     {}
