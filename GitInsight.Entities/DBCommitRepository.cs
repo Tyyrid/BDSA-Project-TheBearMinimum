@@ -14,7 +14,8 @@ public class DBCommitRepository : IDBCommitRepository
         //If commidId exists in database do nothing and return last analyze
         if (context.DBCommits.Where(c => c.CommitId.Equals(commit.CommitId)).Any())
         {
-            if(commit.Author != null && context.DBCommits.Where(a => a.Author!.Equals(commit.Author)).Any()) {
+            if(/*commit.Author != null && */context.DBCommits.Where(a => a.Author!.Equals(commit.Author)).Any())
+            {
                 return (Response.Conflict, commit.CommitId);
             }
         }
