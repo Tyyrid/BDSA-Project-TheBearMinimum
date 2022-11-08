@@ -7,7 +7,7 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         throw new NotImplementedException();
     }
 
-    public DBFrequencyDTO Read(int frequencyId)
+    public DBFrequencyDTO Find(int frequencyId)
     {
         throw new NotImplementedException();
     }

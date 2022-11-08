@@ -27,18 +27,18 @@ public class DBCommitRepository : IDBCommitRepository
         return (Response.Created, c.CommitId);
     }
 
-    public DBCommitDTO Read(int commitId)
+    public DBCommitDTO Find(int commitId)
     {
         var commit = context.DBCommits.Find(commitId);
-        if(commit is null) return null;
-        return new DBCommitDTO(commit.Id, commit.CommitId, commit.Author, commit.GitRepository);
+        if(commit is null) return null!;
+        return new DBCommitDTO(commit.Id, commit.CommitId, commit.Author!, commit.GitRepository);
     }
 
-    public IReadOnlyCollection<DBCommitDTO> ReadAll()
+    public IReadOnlyCollection<DBCommitDTO> Read()
     {
         var commits = from c in context.DBCommits
                       orderby c.CommitId
-                      select new DBCommitDTO(c.Id, c.CommitId, c.Author, c.GitRepository);
+                      select new DBCommitDTO(c.Id, c.CommitId, c.Author!, c.GitRepository);
         return commits.ToArray();
     }
 }
