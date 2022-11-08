@@ -11,4 +11,8 @@
     <PackageReference Include="FluentArgs" Version="0.9.7" />
     <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GitInsight.Core\GitInsight.Core.csproj" />
+  </ItemGroup>
 </Project>

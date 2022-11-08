@@ -1,4 +1,4 @@
-namespace GitInsight;
+namespace GitInsight.Core;
 
 public static class Extensions
 {
