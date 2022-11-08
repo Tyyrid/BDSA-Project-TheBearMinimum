@@ -13,9 +13,10 @@ public class GitInsightController : ControllerBase
         _logger = logger;
     }
 
+    [Route("{org}/{project}")]
     [HttpGet]
-    public ActionResult<string> Get()
+    public ActionResult<string> Get(string org, string project)
     {
-        return "test";
+        return org + "/" + project;
     }
 }
