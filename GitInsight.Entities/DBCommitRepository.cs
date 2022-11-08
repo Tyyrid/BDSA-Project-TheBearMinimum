@@ -29,11 +29,16 @@ public class DBCommitRepository : IDBCommitRepository
 
     public DBCommitDTO Read(int commitId)
     {
-        throw new NotImplementedException();
+        var commit = context.DBCommits.Find(commitId);
+        if(commit is null) return null;
+        return new DBCommitDTO(commit.Id, commit.CommitId, commit.Author, commit.GitRepository);
     }
 
-    public IReadOnlyCollection<DBCommitDTO> Read()
+    public IReadOnlyCollection<DBCommitDTO> ReadAll()
     {
-        throw new NotImplementedException();
+        var commits = from c in context.DBCommits
+                      orderby c.CommitId
+                      select new DBCommitDTO(c.Id, c.CommitId, c.Author, c.GitRepository);
+        return commits.ToArray();
     }
 }
