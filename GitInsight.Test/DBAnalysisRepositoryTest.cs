@@ -13,12 +13,12 @@ public class DBAnalysisRepositoryTest : IDisposable
         var _context = new GitInsightContext(builder.Options);
         _context.Database.EnsureCreated();
         
-        var commit1 = new DBAnalysis(2, "Kristian", "userName/repositoryName");
-        var commit2 = new DBAnalysis(5, "Jonas", "userName/repositoryName");
+        var analysis1 = new DBAnalysis(2, "Kristian", "userName/repositoryName");
+        var analysis2 = new DBAnalysis(5, "Jonas", "userName/repositoryName");
                          
         var frequency1 = new DBFrequency(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), 5);
         var frequency2 = new DBFrequency(2, parseStringToDateTime("10/22/2022 5:33:40 PM"), 3);
-        _context.DBAnalysis_s.AddRange(commit1, commit2);
+        _context.DBAnalysis_s.AddRange(analysis1, analysis2);
         _context.DBFrequencies.AddRange(frequency1, frequency2);
 
         _context.SaveChanges();
@@ -29,7 +29,7 @@ public class DBAnalysisRepositoryTest : IDisposable
     }
 
     [Fact]
-    public void Create_given_Commit_returns_Created_Commit_Id()
+    public void Create_given_Analysis_returns_Created_AnalysisId()
     {
         var (response, created) = repositoryA.Create(new DBAnalysisCreateDTO(4, "Kristian", "userName/repositoryName"));
         
@@ -39,7 +39,7 @@ public class DBAnalysisRepositoryTest : IDisposable
     }
 
     [Fact]
-    public void Create_given_existing_Commit_returns_Confilt_and_Commit_Id()
+    public void Create_given_existing_Analysis_returns_Confilt_and_AnalysisId()
     {
         var (response, created) = repositoryA.Create(new DBAnalysisCreateDTO(2, "Kristian", "userName/repositoryName"));
         
@@ -49,7 +49,7 @@ public class DBAnalysisRepositoryTest : IDisposable
     }
 
     [Fact]
-    public void Find_commit_1()
+    public void Find_analysis_with_comitId_2()
     {
         var commit = repositoryA.Find(2, "userName/repositoryName");
 
@@ -57,12 +57,35 @@ public class DBAnalysisRepositoryTest : IDisposable
     }
 
     [Fact]
-    public void Read_all_commits()
+    public void Find_analysis_with_comitId_3_fails()
+    {
+        var commit = repositoryA.Find(3, "userName/repositoryName");
+
+        commit.Should().Be(null);
+    }
+
+    [Fact]
+    public void Find_analysis_1_with_AnalysisID()
+    {
+        var analysis = repositoryA.Find(1);
+
+        analysis.Should().Be(new DBAnalysisDTO(1, 2, "Kristian", "userName/repositoryName"));
+    }
+    [Fact]
+    public void Find_Analysis_5_with_AnalysisID_fails()
+    {
+        var analysis = repositoryA.Find(5);
+
+        analysis.Should().Be(null);
+    }
+
+    [Fact]
+    public void Read_all_Analysis()
     {
         var result = repositoryA.Read();
-        var commits = result.ToArray(); 
-        commits[0].Should().Be(new DBAnalysisDTO(1, 2, "Kristian", "userName/repositoryName"));
-        commits[1].Should().Be(new DBAnalysisDTO(2, 5, "Jonas", "userName/repositoryName"));
+        var analysis = result.ToArray(); 
+        analysis[0].Should().Be(new DBAnalysisDTO(1, 2, "Kristian", "userName/repositoryName"));
+        analysis[1].Should().Be(new DBAnalysisDTO(2, 5, "Jonas", "userName/repositoryName"));
     }
 
     [Fact]

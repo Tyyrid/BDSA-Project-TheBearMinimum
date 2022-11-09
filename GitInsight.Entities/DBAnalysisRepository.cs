@@ -29,12 +29,16 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         return (Created, c.Id);
     }
 
-    //Ville vi ikke søge på analysisId?
     public DBAnalysisDTO Find(int commitId, string gitRepository)
     {
         var commit = context.DBAnalysis_s.Where(r => r.GitRepository.Equals(gitRepository) && r.LatestCommitId.Equals(commitId)).FirstOrDefault();
         if(commit is null) return null!;
-        //if(commit.Author is null) commit.Author = "";
+        return new DBAnalysisDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
+    }
+    public DBAnalysisDTO Find(int DBAnalysisId)
+    {
+        var commit = context.DBAnalysis_s.Where(r => r.Id == DBAnalysisId).FirstOrDefault();
+        if(commit is null) return null!;
         return new DBAnalysisDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
     }
 
