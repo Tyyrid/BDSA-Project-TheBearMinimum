@@ -10,12 +10,10 @@ public class DBAnalysis
     public string GitRepository { get; set; } = null!;
     public virtual ICollection<DBFrequency> Frequencies { get; set; } = new List<DBFrequency>();
 
-
-    public DBAnalysis(){}
-    public DBAnalysis(int _latestCommitID, string _Author, string _GitRepository){  
-        LatestCommitId = _latestCommitID;
-        Author = _Author;
-        GitRepository = _GitRepository;
+    public DBAnalysis(int LatestCommitId, string Author, string GitRepository){  
+        this.LatestCommitId = LatestCommitId;
+        this.Author = Author;
+        this.GitRepository = GitRepository;
     }
 
 }
