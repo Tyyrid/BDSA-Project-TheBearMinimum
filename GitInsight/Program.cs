@@ -30,7 +30,7 @@ FluentArgsBuilder.New()
             return Task.CompletedTask;
         }
 
-        var configuration = new ConfigurationBuilder()
+        /*var configuration = new ConfigurationBuilder()
             .AddUserSecrets<Program>()
             .Build();
         var connectionString = configuration.GetConnectionString("ConnectionString");
@@ -42,7 +42,10 @@ FluentArgsBuilder.New()
 
         var options = optionsBuilder.Options;
 
-        using var context = new GitInsightContext(options);
+        using var context = new GitInsightContext(options);*/
+        var factory = new GitInsightContextFactory();
+        var context = factory.CreateDbContext(args);
+
 
         switch (mode)
         {
