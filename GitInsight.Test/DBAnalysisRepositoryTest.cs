@@ -18,7 +18,7 @@ public class DBAnalysisRepositoryTest : IDisposable
                          
         var frequency1 = new DBFrequency(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), 5);
         var frequency2 = new DBFrequency(2, parseStringToDateTime("10/22/2022 5:33:40 PM"), 3);
-        _context.DBAnalysis_s.AddRange(analysis1, analysis2);
+        _context.DBAnalyses.AddRange(analysis1, analysis2);
         _context.DBFrequencies.AddRange(frequency1, frequency2);
 
         _context.SaveChanges();

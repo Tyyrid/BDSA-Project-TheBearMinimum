@@ -6,9 +6,9 @@ namespace GitInsight.Entities;
 
 public class GitInsightContext : DbContext
 {
-
-    public DbSet<DBAnalysis> DBAnalysis_s => Set<DBAnalysis>();
+    public DbSet<DBAnalysis> DBAnalyses => Set<DBAnalysis>();
     public DbSet<DBFrequency> DBFrequencies => Set<DBFrequency>();
+    
     public GitInsightContext(DbContextOptions<GitInsightContext> options)
         : base(options)
     {}
