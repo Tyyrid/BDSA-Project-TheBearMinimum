@@ -2,6 +2,24 @@ version: "3.8"
 
 services:
   db:
-    build: ./
+    container_name: GitInsight-db
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      - ACCEPT_EULA=1
+      - MSSQL_SA_PASSWORD=Dev@password
     ports:
       - 1433:1433
+    restart: always
+  api:
+    container_name: GitInsight-api
+    build: ./
+    volumes:
+      - ./:/app
+    ports:
+      - 5000:5000
+      - 5001:5001
+    restart: always
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Development__Password="Dev@password"
+    depends_on:
+      - db
