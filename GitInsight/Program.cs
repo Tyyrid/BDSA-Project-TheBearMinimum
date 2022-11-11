@@ -6,7 +6,7 @@ using GitInsight.Entities;
 
 //dotnet run --repo 'path'
 //hvis path indeholder mellemrum, skal path skrives: "path"
-// --mode author for author m½ode
+// --mode author for author mode
 // --mode frequency for frequency mode (default)
 
 FluentArgsBuilder.New()
@@ -43,6 +43,10 @@ FluentArgsBuilder.New()
         var options = optionsBuilder.Options;
 
         using var context = new GitInsightContext(options);
+        context.Database.EnsureCreated();
+        
+        var _DBAnalysisRepository = new DBAnalysisRepository(context);
+        var _DBFrequencyRepository = new DBFrequencyRepository(context);
 
         switch (mode)
         {
@@ -52,10 +56,30 @@ FluentArgsBuilder.New()
                     Console.WriteLine(a.Author);
                     a.Frequency.Print();
                     Console.WriteLine();
+
+                    
                 });
                 break;
             case Mode.Frequency:
-                repo.Commits.Frequency().Print();
+                var dbanalysis = _DBAnalysisRepository.Find(repo.Commits.First().Id.ToString(), repoInfo.ToString());
+                if (dbanalysis is null)
+                {
+                    //saves commit data to database
+                    var (response, dbanalysisid) =_DBAnalysisRepository.Create(new DBAnalysisCreateDTO(repo.Commits.First().Id.ToString(), "", repoInfo.ToString()));
+                    dbanalysis = _DBAnalysisRepository.Find(dbanalysisid);
+                    foreach(var commit in repo.Commits.Frequency()){
+                        _DBFrequencyRepository.Create(new DBFrequencyCreateDTO(dbanalysisid, commit.When, commit.Count));
+                    }
+
+                    repo.Commits.Frequency().Print();    
+                }else{
+                    var something = context.DBFrequencies.Where(c => c.DBAnalysisId == dbanalysis.Id);
+                    foreach (var f in something)
+                    {
+                        Console.WriteLine($"\t{f.Frequency} {f.Date:yyyy-MM-dd}");
+                    }
+                }
+
                 break;
         }
 

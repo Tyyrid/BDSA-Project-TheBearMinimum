@@ -42,4 +42,20 @@ public class DBFrequencyRepository : IDBFrequencyRepository
                                         fre.Frequency)).ToList();
         return allFrequencies.AsReadOnly();
     }
+
+    public Response Update(DBFrequencyUpdateDTO frequency)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Response Delete(int Id, DateTime Date, bool force = false)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<DBFrequencyDTO> FindAll(int analysisId)
+    {
+        return context.DBFrequencies.Where(c => c.DBAnalysisId == analysisId)
+            .Select(c => new DBFrequencyDTO(c.DBAnalysisId, c.Date, c.Frequency));
+    }
 }

@@ -9,7 +9,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
     }
 
 
-    public (Response response, int latestCommitId) Create(DBAnalysisCreateDTO commit)
+    public (Response response, int analysisID) Create(DBAnalysisCreateDTO commit)
     {
         //If commidId exists in database do nothing and return last analyze
         if (context.DBAnalysis_s.Where(c => c.LatestCommitId.Equals(commit.LatestCommitId)).Any())
@@ -29,7 +29,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         return (Created, c.Id);
     }
 
-    public DBAnalysisDTO Find(int commitId, string gitRepository)
+    public DBAnalysisDTO Find(string commitId, string gitRepository)
     {
         var commit = context.DBAnalysis_s.Where(r => r.GitRepository.Equals(gitRepository) && r.LatestCommitId.Equals(commitId)).FirstOrDefault();
         if(commit is null) return null!;
@@ -49,5 +49,15 @@ public class DBAnalysisRepository : IDBAnalysisRepository
                       orderby c.LatestCommitId
                       select new DBAnalysisDTO(c.Id, c.LatestCommitId, c.Author!, c.GitRepository);
         return commits.ToArray();
+    }
+
+    public Response Update(DBAnalysisUpdateDTO analysis)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Response Delete(int Id, bool force = false)
+    {
+        throw new NotImplementedException();
     }
 }
