@@ -1,8 +1,4 @@
 ﻿using FluentArgs;
-using System.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using GitInsight.Entities;
 
 //dotnet run --repo 'path'
 //hvis path indeholder mellemrum, skal path skrives: "path"

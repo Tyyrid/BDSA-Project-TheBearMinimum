@@ -1,4 +1,7 @@
-FROM mcr.microsoft.com/azure-sql-edge
-ENV ACCEPT_EULA=1
-ENV MSSQL_SA_PASSWORD=Dev@password
-EXPOSE 1433
+FROM mcr.microsoft.com/dotnet/sdk:6.0
+
+WORKDIR /app
+
+RUN dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p Dev@password
+
+ENTRYPOINT [ "dotnet", "watch", "run", "--project", "GitInsight.Api"]

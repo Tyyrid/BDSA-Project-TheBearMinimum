@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GitInsight\GitInsight.csproj" />
+    <ProjectReference Include="..\GitInsight.Core\GitInsight.Core.csproj" />
     <ProjectReference Include="..\GitInsight.Entities\GitInsight.Entities.csproj" />
   </ItemGroup>
 
