@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Core", "GitInsig
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Api", "GitInsight.Api\GitInsight.Api.csproj", "{BC9F203C-30D1-4CF1-A782-5F0454FFFE87}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.BlazorApp", "GitInsight.BlazorApp\GitInsight.BlazorApp.csproj", "{C34638C4-CEDD-4084-ACD4-2A8FD9139AD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{BC9F203C-30D1-4CF1-A782-5F0454FFFE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC9F203C-30D1-4CF1-A782-5F0454FFFE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC9F203C-30D1-4CF1-A782-5F0454FFFE87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C34638C4-CEDD-4084-ACD4-2A8FD9139AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C34638C4-CEDD-4084-ACD4-2A8FD9139AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C34638C4-CEDD-4084-ACD4-2A8FD9139AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C34638C4-CEDD-4084-ACD4-2A8FD9139AD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
