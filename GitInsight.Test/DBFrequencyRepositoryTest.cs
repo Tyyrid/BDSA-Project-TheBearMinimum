@@ -64,38 +64,7 @@ public class DBFrequencyRepositoryTest : IDisposable
         frequencies[0].Should().Be(new DBFrequencyDTO(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), 5));
         frequencies[1].Should().Be(new DBFrequencyDTO(2, parseStringToDateTime("10/22/2022 5:33:40 PM"), 3));
     }
-
-    [Fact]
-    public void Update_given_non_existing_Frequency_returns_NotFound() => repository.Update(new DBFrequencyUpdateDTO(3, parseStringToDateTime("12/22/2022 5:33:40 PM"), 4)).Should().Be(NotFound);
     
-    [Fact]
-    public void Update_updates_and_returns_Updated()
-    {
-        var response = repository.Update(new DBFrequencyUpdateDTO(2, parseStringToDateTime("12/22/2022 5:33:40 PM"), 4));
-
-        response.Should().Be(Updated);
-
-        var entity = context.DBFrequencies.Find(2, parseStringToDateTime("12/22/2022 5:33:40 PM"));
-
-        entity.Should().NotBeNull();
-        entity!.Frequency.Should().Be(4);
-    }
-
-    [Fact]
-    public void Delete_given_non_existing_Id_returns_NotFound() => repository.Delete(42, DateTime.MaxValue).Should().Be(NotFound);
-
-    [Fact]
-    public void Delete_deletes_and_returns_Deleted()
-    {
-        var response = repository.Delete(2, parseStringToDateTime("10/22/2022 5:33:40 PM"));
-
-        response.Should().Be(Deleted);
-
-        var entity = context.DBFrequencies.Find(2, parseStringToDateTime("10/22/2022 5:33:40 PM"));
-
-        entity.Should().BeNull();
-    }
-
     public DateTime parseStringToDateTime(string date)
     {
         return DateTime.Parse(date, System.Globalization.CultureInfo.InvariantCulture);

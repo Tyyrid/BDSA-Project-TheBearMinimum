@@ -9,16 +9,13 @@ public class DBAnalysisRepository : IDBAnalysisRepository
     }
 
 
-    public (Response response, int analysisID) Create(DBAnalysisCreateDTO commit)
+    public (Response, int) Create(DBAnalysisCreateDTO commit)
     {
         //If commidId exists in database do nothing and return last analyze
-        if (context.DBAnalysis_s.Where(c => c.LatestCommitId.Equals(commit.LatestCommitId)).Any())
+        if (context.DBAnalysis_s.Where(r => r.GitRepository == commit.GitRepository && r.LatestCommitId.Equals(commit.LatestCommitId) && r.Author == commit.Author).Any())
         {
-            if(context.DBAnalysis_s.Where(a => a.Author!.Equals(commit.Author)).Any())
-            {
-                var existing = Find(commit.LatestCommitId, commit.GitRepository);
-                return (Conflict, existing.Id);
-            }
+            var existing = Find(commit.LatestCommitId, commit.GitRepository);
+            return (Conflict, existing.Id);
             
         }
         //Create new DBCommit
@@ -29,9 +26,9 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         return (Created, c.Id);
     }
 
-    public DBAnalysisDTO Find(string commitId, string gitRepository)
+    public DBAnalysisDTO Find(string commitId, string gitRepository, string Author = "")
     {
-        var commit = context.DBAnalysis_s.Where(r => r.GitRepository.Equals(gitRepository) && r.LatestCommitId.Equals(commitId)).FirstOrDefault();
+        var commit = context.DBAnalysis_s.Where(r => r.GitRepository.Equals(gitRepository) && r.LatestCommitId.Equals(commitId) && r.Author.Equals(Author)).FirstOrDefault();
         if(commit is null) return null!;
         return new DBAnalysisDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
     }
@@ -40,6 +37,15 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         var commit = context.DBAnalysis_s.Where(r => r.Id == DBAnalysisId).FirstOrDefault();
         if(commit is null) return null!;
         return new DBAnalysisDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
+    }
+    public IEnumerable<DBAnalysisDTO> FindAuthorAnalysis_s(string gitRepository)
+    {
+        var analysis_s = context.DBAnalysis_s.Where(c => c.GitRepository == gitRepository);
+        foreach (var analysis in analysis_s)
+        {
+            yield return new DBAnalysisDTO(analysis.Id, analysis.LatestCommitId, analysis.Author, analysis.GitRepository);
+        }
+
     }
 
     //måske sortere på analysisId?
@@ -53,11 +59,32 @@ public class DBAnalysisRepository : IDBAnalysisRepository
 
     public Response Update(DBAnalysisUpdateDTO analysis)
     {
-        throw new NotImplementedException();
+        var entity = context.DBAnalysis_s.Where(r => r.Id == analysis.Id).FirstOrDefault();
+        if (entity is null) return NotFound;
+        else if ((entity.Author == "" || analysis.Author == "") && entity.Author != analysis.Author) return Conflict;
+        else if (!context.DBAnalysis_s.Where(r => r.Id == analysis.Id && r.Author == analysis.Author).Any()) return BadRequest;
+
+        entity.LatestCommitId = analysis.LatestCommitId;
+
+        return Updated;
+    }
+
+    public (Response, int?) UpdateOrCreate(DBAnalysisUpdateDTO analysis)
+    {
+        var response = Update(analysis);
+        int? analysisID = null;
+
+        if (response != Updated && !context.DBAnalysis_s.Where(r => r.Id == analysis.Id).Any())
+        {
+            (response, analysisID) = Create(new DBAnalysisCreateDTO(analysis.LatestCommitId, analysis.Author, analysis.GitRepository));
+        }
+
+        return (Updated, analysisID);
     }
 
     public Response Delete(int Id, bool force = false)
     {
         throw new NotImplementedException();
     }
+
 }
