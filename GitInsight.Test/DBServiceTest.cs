@@ -5,7 +5,7 @@ public class DBServiceTest{
         //var dbService = new Substitute.For<IDBService>();
     }
 
-    [Fact]
+    [Fact  (Skip = "specific reason")]
     public void TestName()
     {
         // Given

@@ -9,7 +9,7 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         this.context = context;
     }
 
-    public (Response response, int analysisId) Create(DBFrequencyCreateDTO frequency)
+    public (Response, int) Create(DBFrequencyCreateDTO frequency)
     {
         if (context.DBFrequencies.Where(f => f.DBAnalysisId.Equals(frequency.DBAnalysisId)
             && f.Date.Equals(frequency.Date)).Any())
@@ -45,7 +45,26 @@ public class DBFrequencyRepository : IDBFrequencyRepository
 
     public Response Update(DBFrequencyUpdateDTO frequency)
     {
-        throw new NotImplementedException();
+        var entity = context.DBFrequencies.Where(r => r.Date == frequency.Date && r.DBAnalysisId == frequency.DBAnalysisId).FirstOrDefault();
+
+        if (entity is null) return NotFound;
+        
+        entity.Frequency = frequency.Frequency;
+
+        return Updated;
+    }
+
+    public (Response, int?) UpdateOrCreate(DBFrequencyUpdateDTO frequency)
+    {
+        var response = Update(frequency);
+        int? DBAnalysisId = null;
+        
+        if (response != Updated)
+        {
+            (response, DBAnalysisId) = Create(new DBFrequencyCreateDTO(frequency.DBAnalysisId, frequency.Date, frequency.Frequency));
+        }
+
+        return (response, DBAnalysisId);
     }
 
     public Response Delete(int Id, DateTime Date, bool force = false)

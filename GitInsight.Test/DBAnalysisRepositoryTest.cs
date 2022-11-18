@@ -2,7 +2,7 @@ namespace GitInsight.Test;
 public class DBAnalysisRepositoryTest : IDisposable
 {
     private readonly GitInsightContext context;
-    private readonly DBAnalysisRepository repository;
+    private readonly IDBAnalysisRepository repository;
     public DBAnalysisRepositoryTest(){
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
@@ -18,7 +18,7 @@ public class DBAnalysisRepositoryTest : IDisposable
                          
         var frequency1 = new DBFrequency(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), 5);
         var frequency2 = new DBFrequency(2, parseStringToDateTime("10/22/2022 5:33:40 PM"), 3);
-        _context.DBAnalysis_s.AddRange(analysis1, analysis2);
+        _context.DBAnalysis_s.AddRange(analysis1, analysis2, analysis3);
         _context.DBFrequencies.AddRange(frequency1, frequency2);
 
         _context.SaveChanges();
@@ -50,7 +50,7 @@ public class DBAnalysisRepositoryTest : IDisposable
     [Fact]
     public void Find_analysis_with_commitId_2()
     {
-        var commit = repository.Find("2", "userName/repositoryName");
+        var commit = repository.Find("2", "userName/repositoryName", "Kristian");
 
         commit.Should().Be(new DBAnalysisDTO(1, "2", "Kristian", "userName/repositoryName"));
     }
@@ -101,9 +101,11 @@ public class DBAnalysisRepositoryTest : IDisposable
     public void Read_all_Analysis()
     {
         var result = repository.Read();
-        var analysis = result.ToArray(); 
+        
+        var analysis = result.OrderBy(c => c.Id).ToArray(); 
         analysis[0].Should().Be(new DBAnalysisDTO(1, "2", "Kristian", "userName/repositoryName"));
         analysis[1].Should().Be(new DBAnalysisDTO(2, "5", "Jonas", "userName/repositoryName"));
+        analysis[2].Should().Be(new DBAnalysisDTO(3, "4", "", "userName/repositoryName"));
     }
 
     [Fact]
@@ -124,7 +126,7 @@ public class DBAnalysisRepositoryTest : IDisposable
     {
         // Analysis saved in database is in frequency mode, but this tries with author specified
         // Arrange
-        var updateDTO = new DBAnalysisUpdateDTO(repository.Find("4", "userName/repositoryName", "").Id, "4", "Gert", "userName/repositoryName");
+        var updateDTO = new DBAnalysisUpdateDTO(repository.Find("4", "userName/repositoryName").Id, "4", "Gert", "userName/repositoryName");
 
         // Act
         var response = repository.Update(updateDTO);
@@ -151,7 +153,7 @@ public class DBAnalysisRepositoryTest : IDisposable
     public void Update_updates_LatestCommitId_and_returns_Updated()
     {
         // Arrange
-        var updateDTO = new DBAnalysisUpdateDTO(repository.Find("4", "userName/repositoryName", "").Id, "42", "", "userName/repositoryName");
+        var updateDTO = new DBAnalysisUpdateDTO(repository.Find("4", "userName/repositoryName").Id, "42", "", "userName/repositoryName");
 
         // Act
         var response = repository.Update(updateDTO);
@@ -164,14 +166,16 @@ public class DBAnalysisRepositoryTest : IDisposable
     public void UpdateOrCreate_given_nonExisting_Analysis_returns_Created_analysisId()
     {
         // Arrange
-        int analysisId = 42;
-        var updateDTO = new DBAnalysisUpdateDTO(analysisId, "Foo", "Bar", "LoremIpsum");
+        int wrongAnalysisId = 42;
+        var updateDTO = new DBAnalysisUpdateDTO(wrongAnalysisId, "Foo", "Bar", "LoremIpsum");
 
         // Act
         (var response, var id) = repository.UpdateOrCreate(updateDTO);
+        int? analysisId = repository.Find("Foo", "LoremIpsum", "Bar").Id;
 
         // Assert
         response.Should().Be(Created);
+        analysisId.Should().NotBeNull();
         id.Should().Be(analysisId);
     }
 
@@ -179,13 +183,30 @@ public class DBAnalysisRepositoryTest : IDisposable
     public void UpdateOrCreate_given_existing_analysis_returns_Updated_null()
     {
         // Arrange
-        var updateDTO = new DBAnalysisUpdateDTO(repository.Find("4", "userName/repositoryName", "").Id, "42", "", "userName/repositoryName");
+        var updateDTO = new DBAnalysisUpdateDTO(repository.Find("4", "userName/repositoryName").Id, "42", "", "userName/repositoryName");
+
+        // Act
+        (var response, var id) = repository.UpdateOrCreate(updateDTO);
+        var updatedAnalysis = repository.Find("42", "userName/repositoryName");
+
+        // Assert
+        response.Should().Be(Updated);
+        id.Should().BeNull();
+        updatedAnalysis.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void UpdateOrCreate_given_wrong_analysisType_returns_Conflict_analysisId()
+    {
+        // Arrange
+        var analysisId = repository.Find("4", "userName/repositoryName").Id;
+        var updateDTO = new DBAnalysisUpdateDTO(analysisId, "42", "Gert", "userName/repositoryName");
 
         // Act
         (var response, var id) = repository.UpdateOrCreate(updateDTO);
 
         // Assert
-        response.Should().Be(Updated);
+        response.Should().Be(Response.Conflict);
         id.Should().BeNull();
     }
 

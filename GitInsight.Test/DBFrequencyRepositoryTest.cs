@@ -64,6 +64,21 @@ public class DBFrequencyRepositoryTest : IDisposable
         frequencies[0].Should().Be(new DBFrequencyDTO(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), 5));
         frequencies[1].Should().Be(new DBFrequencyDTO(2, parseStringToDateTime("10/22/2022 5:33:40 PM"), 3));
     }
+
+    [Fact]
+    public void Update_given_correct_DTO_updates_and_returns_Updated()
+    {
+        // Arrange
+        var updateDTO = new DBFrequencyUpdateDTO(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), 10);
+
+        // Act
+        var response = repository.Update(updateDTO);
+        //var entity = repository.Find(1, );
+
+        // Assert
+        response.Should().Be(Updated);
+
+    }
     
     public DateTime parseStringToDateTime(string date)
     {

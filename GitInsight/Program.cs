@@ -16,17 +16,65 @@ FluentArgsBuilder.New()
         .IsOptional()
     .Call(mode => repoInfo =>
     {
+        Repository repo;
+        try
+        {
+            repo = new Repository(repoInfo.ToString());
+        }
+        catch (RepositoryNotFoundException ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            return Task.CompletedTask;
+        }
 
-        DBService dBService = new DBService(repoInfo.ToString());
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<Program>()
+            .Build();
+        var connectionString = configuration.GetConnectionString("ConnectionString");
+
+        using var connection = new SqlConnection(connectionString);
+
+        var optionsBuilder = new DbContextOptionsBuilder<GitInsightContext>();
+        optionsBuilder.UseSqlServer(connectionString);
+
+        var options = optionsBuilder.Options;
+
+        using var context = new GitInsightContext(options); //using ???
+        context.Database.EnsureCreated();
+        Console.WriteLine(context.DBAnalysis_s.FirstOrDefault());
+
+        DBService dBService = new DBService(repo, repoInfo.ToString(), new DBAnalysisRepository(context), new DBFrequencyRepository(context));
 
 
         
-        /* 
-            case Mode.Frequency:
+        switch (mode){
+            
+            case Mode.Author:
                 
-
+                var autherfrequiencies = dBService.GetAuthorAnalysis();
+                
+                Console.WriteLine(autherfrequiencies.Count());
+                try{
+                foreach (var author in autherfrequiencies)
+                {
+                    Console.WriteLine(author.Item1);
+                    foreach (var f in author.Item2)
+                    {
+                        Console.WriteLine($"\t{f.Frequency} {f.Date:yyyy-MM-dd}");
+                    }   
+                } 
+                }catch(System.ObjectDisposedException e){
+                    Console.WriteLine("got ja");
+                }
+            
+                break; 
+            case Mode.Frequency:
+                foreach (var f in dBService.GetFrequencyAnalysis())
+                {
+                    Console.WriteLine($"\t{f.Frequency} {f.Date:yyyy-MM-dd}");
+                }
                 break;
-        } */
+        } 
 
         return Task.CompletedTask;
     })

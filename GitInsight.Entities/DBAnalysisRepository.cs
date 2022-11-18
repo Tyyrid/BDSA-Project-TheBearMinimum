@@ -14,9 +14,8 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         //If commidId exists in database do nothing and return last analyze
         if (context.DBAnalysis_s.Where(r => r.GitRepository == commit.GitRepository && r.LatestCommitId.Equals(commit.LatestCommitId) && r.Author == commit.Author).Any())
         {
-            var existing = Find(commit.LatestCommitId, commit.GitRepository);
+            var existing = Find(commit.LatestCommitId, commit.GitRepository, commit.Author);
             return (Conflict, existing.Id);
-            
         }
         //Create new DBCommit
         DBAnalysis c = new DBAnalysis(commit.LatestCommitId, commit.Author!, commit.GitRepository);
@@ -65,7 +64,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         else if (!context.DBAnalysis_s.Where(r => r.Id == analysis.Id && r.Author == analysis.Author).Any()) return BadRequest;
 
         entity.LatestCommitId = analysis.LatestCommitId;
-
+        context.SaveChanges();
         return Updated;
     }
 
@@ -79,7 +78,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
             (response, analysisID) = Create(new DBAnalysisCreateDTO(analysis.LatestCommitId, analysis.Author, analysis.GitRepository));
         }
 
-        return (Updated, analysisID);
+        return (response, analysisID);
     }
 
     public Response Delete(int Id, bool force = false)
