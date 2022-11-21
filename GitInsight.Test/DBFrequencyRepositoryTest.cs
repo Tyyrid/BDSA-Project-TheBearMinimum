@@ -135,6 +135,36 @@ public class DBFrequencyRepositoryTest : IDisposable
         entity.Date.Should().Be(dateTime);
         entity.Frequency.Should().Be(frequency);
     }
+
+    [Fact]
+    public void Delete_given_existing_id_deletes_returns_deleted()
+    {
+        // Arrange
+        var id = 1;
+        var dateTime = parseStringToDateTime("5/1/2020 8:30:52 AM");
+
+        // Act
+        var response = repository.Delete(id, dateTime);
+        var entity = repository.Find(id, dateTime);
+
+        // Assert
+        response.Should().Be(Deleted);
+        entity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_nonExisting_id_returns_NotFound()
+    {
+        // Arrange
+        var id = 42;
+        var dateTime = DateTime.Now;
+
+        // Act
+        var response = repository.Delete(id, dateTime);
+
+        // Assert
+        response.Should().Be(NotFound);
+    }
     
     public DateTime parseStringToDateTime(string date)
     {
