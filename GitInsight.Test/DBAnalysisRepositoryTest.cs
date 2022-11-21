@@ -210,6 +210,61 @@ public class DBAnalysisRepositoryTest : IDisposable
         id.Should().BeNull();
     }
 
+    [Fact]
+    public void Delete_given_existing_id_false_deletes_returns_Deleted()
+    {
+        // Arrange
+        var analysisId = repository.Find("4", "userName/repositoryName").Id;
+        
+        // Act
+        var response = repository.Delete(analysisId);
+        var entity = repository.Find("4", "userName/repositoryName");
+
+        // Assert
+        response.Should().Be(Deleted);
+        entity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_existing_id_true_deletes_returns_Deleted()
+    {
+        // Arrange
+        var analysisId = repository.Find("2", "userName/repositoryName", "Kristian").Id;
+
+        // Act
+        var response = repository.Delete(analysisId, true);
+        var entity = repository.Find("2", "userName/repositoryName", "Kristian");
+
+        // Assert
+        response.Should().Be(Deleted);
+        entity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_existing_id_false_returns_Conflict()
+    {
+        // Arrange
+        var analysisId = repository.Find("2", "userName/repositoryName", "Kristian").Id;
+
+        // Act
+        var response = repository.Delete(analysisId);
+        var entity = repository.Find("2", "userName/repositoryName", "Kristian");
+
+        // Assert
+        response.Should().Be(Deleted);
+        entity.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Delete_given_nonExisting_id_returns_NotFound()
+    {
+        // Act
+        var response = repository.Delete(42);
+
+        // Assert
+        response.Should().Be(NotFound);
+    }
+
     public DateTime parseStringToDateTime(string date)
     {
         return DateTime.Parse(date, System.Globalization.CultureInfo.InvariantCulture);
