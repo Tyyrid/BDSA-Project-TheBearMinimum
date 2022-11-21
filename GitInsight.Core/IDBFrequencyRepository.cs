@@ -8,5 +8,5 @@ public interface IDBFrequencyRepository
     IReadOnlyCollection<DBFrequencyDTO> Read();
     Response Update(DBFrequencyUpdateDTO frequency);
     (Response, int?) UpdateOrCreate(DBFrequencyUpdateDTO frequency);
-    Response Delete(int AnalysisId, DateTime Date, bool force = false);
+    Response Delete(int AnalysisId, DateTime Date);
 }

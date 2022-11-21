@@ -50,7 +50,7 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         if (entity is null) return NotFound;
         
         entity.Frequency = frequency.Frequency;
-        
+
         context.SaveChanges();
 
         return Updated;
@@ -69,7 +69,7 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         return (response, DBAnalysisId);
     }
 
-    public Response Delete(int Id, DateTime Date, bool force = false)
+    public Response Delete(int Id, DateTime Date)
     {
         throw new NotImplementedException();
     }
