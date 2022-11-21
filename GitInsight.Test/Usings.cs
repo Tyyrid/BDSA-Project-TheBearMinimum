@@ -8,3 +8,5 @@ global using GitInsight.Core;
 global using static GitInsight.Core.Response;
 global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
+global using System.Globalization;
+global using System.Reflection;

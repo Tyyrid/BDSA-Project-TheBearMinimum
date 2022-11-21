@@ -42,6 +42,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         var analysis_s = context.DBAnalysis_s.Where(c => c.GitRepository == gitRepository);
         foreach (var analysis in analysis_s)
         {
+            if(analysis.Author == "") continue;
             yield return new DBAnalysisDTO(analysis.Id, analysis.LatestCommitId, analysis.Author, analysis.GitRepository);
         }
 

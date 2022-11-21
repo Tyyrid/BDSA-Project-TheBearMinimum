@@ -34,9 +34,10 @@ public class DBService : IDBService
         }
     }
 
-    public static IEnumerable<DBFrequencyDTO> GetFrequencyAnalysis(Repository repo, string repoPath, DBAnalysisRepository dBAnalysisRepository, DBFrequencyRepository dBFrequencyRepository)
+    public static IEnumerable<DBFrequencyDTO> GetFrequencyAnalysis(IRepository repo, string repoPath, DBAnalysisRepository dBAnalysisRepository, DBFrequencyRepository dBFrequencyRepository)
     {
-        var dbanalysis = dBAnalysisRepository.Find(repo.Commits.First().Id.ToString(), repoPath);
+        var firstcommitid = repo.Commits.First().Id.ToString();
+        var dbanalysis = dBAnalysisRepository.Find(firstcommitid, repoPath);
         if (dbanalysis is null)
                 {
                     //saves commit data to database

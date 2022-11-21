@@ -266,7 +266,7 @@ public class DBAnalysisRepositoryTest : IDisposable
         response.Should().Be(NotFound);
     }
 
-    public DateTime parseStringToDateTime(string date)
+    public static DateTime parseStringToDateTime(string date)
     {
         return DateTime.Parse(date, System.Globalization.CultureInfo.InvariantCulture);
     }
