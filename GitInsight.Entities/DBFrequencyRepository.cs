@@ -50,6 +50,8 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         if (entity is null) return NotFound;
         
         entity.Frequency = frequency.Frequency;
+        
+        context.SaveChanges();
 
         return Updated;
     }
