@@ -71,7 +71,13 @@ public class DBFrequencyRepository : IDBFrequencyRepository
 
     public Response Delete(int Id, DateTime Date)
     {
-        throw new NotImplementedException();
+        var entity = context.DBFrequencies.Where(r => r.DBAnalysisId == Id && r.Date == Date).FirstOrDefault();
+
+        if (entity is null) return NotFound;
+
+        context.DBFrequencies.Remove(entity);
+        context.SaveChanges();
+        return Deleted;
     }
 
     public IEnumerable<DBFrequencyDTO> FindAll(int analysisId)
