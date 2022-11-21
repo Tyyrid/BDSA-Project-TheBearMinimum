@@ -70,6 +70,7 @@ public class DBAnalysisRepositoryTest : IDisposable
 
         analysis.Should().Be(new DBAnalysisDTO(1, "2", "Kristian", "userName/repositoryName"));
     }
+
     [Fact]
     public void Find_Analysis_5_with_AnalysisID_fails()
     {
@@ -251,7 +252,7 @@ public class DBAnalysisRepositoryTest : IDisposable
         var entity = repository.Find("2", "userName/repositoryName", "Kristian");
 
         // Assert
-        response.Should().Be(Deleted);
+        response.Should().Be(Response.Conflict);
         entity.Should().NotBeNull();
     }
 
