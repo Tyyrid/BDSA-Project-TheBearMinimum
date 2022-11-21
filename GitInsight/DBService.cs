@@ -1,30 +1,15 @@
 using GitInsight.Entities;
 
 public class DBService : IDBService
-{
-    private DBAnalysisRepository dBAnalysisRepository { get; init; }
-    private DBFrequencyRepository dBFrequencyRepository { get; init; }
-    private Repository repo { get; init; }
-    private string repoPath { get; init; }
-    public DBService(Repository repo, string repoPath, DBAnalysisRepository dBAnalysisRepository, DBFrequencyRepository dBFrequencyRepository){
-        
-
-        
-        this.dBAnalysisRepository = dBAnalysisRepository;
-        this.dBFrequencyRepository = dBFrequencyRepository;
-
-        
-        this.repo = repo;
-        this.repoPath = repoPath;
-    }
-
-    public IEnumerable<(string, IEnumerable<DBFrequencyDTO>)> GetAuthorAnalysis()
+{   
+    public static IEnumerable<(string, IEnumerable<DBFrequencyDTO>)> GetAuthorAnalysis(Repository repo, string repoPath, DBAnalysisRepository dBAnalysisRepository, DBFrequencyRepository dBFrequencyRepository)
     {
         var dbanalysis = dBAnalysisRepository.Find(repo.Commits.First().Id.ToString(), repoPath, repo.Commits.First().Author.Name);
         
         if (dbanalysis is null)
         {
             var authorgroups = repo.Commits.GroupBy(a => a.Author.Name);
+            var authorList = new List<(string, IEnumerable<DBFrequencyDTO>)>();
             foreach (var authorgroup in authorgroups)
             {
                 var leadAuthorComit = authorgroup.First();
@@ -33,22 +18,23 @@ public class DBService : IDBService
                 foreach(var commit in authorgroup.Frequency()){
                     dBFrequencyRepository.Create(new DBFrequencyCreateDTO(dbanalysisid, commit.When, commit.Count));
                 }
-                //Console.WriteLine(dbanalysis.Author);
-                yield return (dbanalysis.Author, dBFrequencyRepository.FindAll(dbanalysisid));
-
+                authorList.Add((dbanalysis.Author, dBFrequencyRepository.FindAll(dbanalysisid)));
             }
+            return authorList;
             
         }else
         {
             var analysis_s = dBAnalysisRepository.FindAuthorAnalysis_s(repoPath);
+            var authorList = new List<(string, IEnumerable<DBFrequencyDTO>)>();
             foreach (var analysis in analysis_s)
             {
-                yield return (analysis.Author, dBFrequencyRepository.FindAll(analysis.Id));
+                authorList.Add((analysis.Author, dBFrequencyRepository.FindAll(analysis.Id)));
             }
+            return authorList;
         }
     }
 
-    public IEnumerable<DBFrequencyDTO> GetFrequencyAnalysis()
+    public static IEnumerable<DBFrequencyDTO> GetFrequencyAnalysis(Repository repo, string repoPath, DBAnalysisRepository dBAnalysisRepository, DBFrequencyRepository dBFrequencyRepository)
     {
         var dbanalysis = dBAnalysisRepository.Find(repo.Commits.First().Id.ToString(), repoPath);
         if (dbanalysis is null)

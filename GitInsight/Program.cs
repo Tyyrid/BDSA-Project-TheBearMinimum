@@ -39,22 +39,16 @@ FluentArgsBuilder.New()
 
         var options = optionsBuilder.Options;
 
-        using var context = new GitInsightContext(options); //using ???
+        using var context = new GitInsightContext(options);
         context.Database.EnsureCreated();
-        Console.WriteLine(context.DBAnalysis_s.FirstOrDefault());
+        var dBAnalysisRepository = new DBAnalysisRepository(context);
+        var dBFrequencyRepository = new DBFrequencyRepository(context);
 
-        DBService dBService = new DBService(repo, repoInfo.ToString(), new DBAnalysisRepository(context), new DBFrequencyRepository(context));
-
-
-        
         switch (mode){
-            
             case Mode.Author:
-                
-                var autherfrequiencies = dBService.GetAuthorAnalysis();
+                var autherfrequiencies = DBService.GetAuthorAnalysis(repo, repoInfo.ToString(), dBAnalysisRepository, dBFrequencyRepository);
                 
                 Console.WriteLine(autherfrequiencies.Count());
-                try{
                 foreach (var author in autherfrequiencies)
                 {
                     Console.WriteLine(author.Item1);
@@ -63,18 +57,14 @@ FluentArgsBuilder.New()
                         Console.WriteLine($"\t{f.Frequency} {f.Date:yyyy-MM-dd}");
                     }   
                 } 
-                }catch(System.ObjectDisposedException e){
-                    Console.WriteLine("got ja");
-                }
-            
                 break; 
             case Mode.Frequency:
-                foreach (var f in dBService.GetFrequencyAnalysis())
+                foreach (var f in DBService.GetFrequencyAnalysis(repo, repoInfo.ToString(), dBAnalysisRepository, dBFrequencyRepository))
                 {
                     Console.WriteLine($"\t{f.Frequency} {f.Date:yyyy-MM-dd}");
                 }
                 break;
-        } 
+        }  
 
         return Task.CompletedTask;
     })
