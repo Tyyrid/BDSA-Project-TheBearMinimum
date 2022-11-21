@@ -51,6 +51,8 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         
         entity.Frequency = frequency.Frequency;
 
+        context.SaveChanges();
+
         return Updated;
     }
 
@@ -67,9 +69,15 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         return (response, DBAnalysisId);
     }
 
-    public Response Delete(int Id, DateTime Date, bool force = false)
+    public Response Delete(int Id, DateTime Date)
     {
-        throw new NotImplementedException();
+        var entity = context.DBFrequencies.Where(r => r.DBAnalysisId == Id && r.Date == Date).FirstOrDefault();
+
+        if (entity is null) return NotFound;
+
+        context.DBFrequencies.Remove(entity);
+        context.SaveChanges();
+        return Deleted;
     }
 
     public IEnumerable<DBFrequencyDTO> FindAll(int analysisId)

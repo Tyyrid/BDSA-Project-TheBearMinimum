@@ -69,15 +69,101 @@ public class DBFrequencyRepositoryTest : IDisposable
     public void Update_given_correct_DTO_updates_and_returns_Updated()
     {
         // Arrange
-        var updateDTO = new DBFrequencyUpdateDTO(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), 10);
+        var newFrequency = 10;
+        var updateDTO = new DBFrequencyUpdateDTO(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), newFrequency);
 
         // Act
         var response = repository.Update(updateDTO);
-        //var entity = repository.Find(1, );
+        var entity = repository.Find(1, parseStringToDateTime("5/1/2020 8:30:52 AM"));
 
         // Assert
         response.Should().Be(Updated);
+        entity.Frequency.Should().Be(newFrequency);
+    }
 
+    [Fact]
+    public void Update_given_NonExisting_DTO_returns_NotFound()
+    {
+        // Arrange
+        var updateDTO = new DBFrequencyUpdateDTO(42, DateTime.Now, 3);
+
+        // Act
+        var response = repository.Update(updateDTO);
+
+        // Assert
+        response.Should().Be(NotFound);
+    }
+
+    [Fact]
+    public void UpdateOrCreate_given_existing_DTO_updates_and_returns_updated_null()
+    {
+        // Arrange
+        var newFrequency = 10;
+        var updateDTO = new DBFrequencyUpdateDTO(1, parseStringToDateTime("5/1/2020 8:30:52 AM"), newFrequency);
+
+        // Act
+        (var response, int? id) = repository.UpdateOrCreate(updateDTO);
+        var entity = repository.Find(1, parseStringToDateTime("5/1/2020 8:30:52 AM"));
+
+        // Assert
+        id.Should().BeNull();
+        response.Should().Be(Updated);
+        entity.Frequency.Should().Be(newFrequency);
+    }
+
+    [Fact]
+    public void UpdateOrCreate_given_NonExisting_DTO_creates_returns_Created_ID()
+    {
+        // Arrange
+        var DBAnalysisId = 1;
+        var dateTime = DateTime.Now;
+        var frequency = 10;
+        var updateDTO = new DBFrequencyUpdateDTO(DBAnalysisId, dateTime, frequency);
+
+        // Act
+        (var response, int? id) = repository.UpdateOrCreate(updateDTO);
+        var entity = repository.Find(DBAnalysisId, dateTime);
+
+        // Assert
+        id.Should().NotBeNull();
+        entity.Should().NotBeNull();
+
+        response.Should().Be(Created);
+        id.Should().Be(DBAnalysisId);
+
+        entity.DBAnalysisId.Should().Be(DBAnalysisId);
+        entity.Date.Should().Be(dateTime);
+        entity.Frequency.Should().Be(frequency);
+    }
+
+    [Fact]
+    public void Delete_given_existing_id_deletes_returns_deleted()
+    {
+        // Arrange
+        var id = 1;
+        var dateTime = parseStringToDateTime("5/1/2020 8:30:52 AM");
+
+        // Act
+        var response = repository.Delete(id, dateTime);
+        var entity = repository.Find(id, dateTime);
+
+        // Assert
+        response.Should().Be(Deleted);
+        entity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_nonExisting_id_returns_NotFound()
+    {
+        // Arrange
+        var id = 42;
+        var dateTime = DateTime.Now;
+
+        // Act
+        var response = repository.Delete(id, dateTime);
+
+        // Assert
+        response.Should().Be(NotFound);
     }
     
     public DateTime parseStringToDateTime(string date)

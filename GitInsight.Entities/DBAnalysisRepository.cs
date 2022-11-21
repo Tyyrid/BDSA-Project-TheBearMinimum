@@ -83,7 +83,15 @@ public class DBAnalysisRepository : IDBAnalysisRepository
 
     public Response Delete(int Id, bool force = false)
     {
-        throw new NotImplementedException();
+        var entity = context.DBAnalysis_s.Where(a => a.Id == Id).FirstOrDefault();
+
+        if (entity is null) return NotFound;
+
+        if (force == false && context.DBFrequencies.Where(f => f.DBAnalysisId == Id).Any()) return Conflict;
+
+        context.DBAnalysis_s.Remove(entity);
+        context.SaveChanges();
+        return Deleted;
     }
 
 }

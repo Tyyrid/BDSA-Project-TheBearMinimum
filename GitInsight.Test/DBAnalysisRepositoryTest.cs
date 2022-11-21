@@ -70,6 +70,7 @@ public class DBAnalysisRepositoryTest : IDisposable
 
         analysis.Should().Be(new DBAnalysisDTO(1, "2", "Kristian", "userName/repositoryName"));
     }
+
     [Fact]
     public void Find_Analysis_5_with_AnalysisID_fails()
     {
@@ -208,6 +209,61 @@ public class DBAnalysisRepositoryTest : IDisposable
         // Assert
         response.Should().Be(Response.Conflict);
         id.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_existing_id_false_deletes_returns_Deleted()
+    {
+        // Arrange
+        var analysisId = repository.Find("4", "userName/repositoryName").Id;
+        
+        // Act
+        var response = repository.Delete(analysisId);
+        var entity = repository.Find("4", "userName/repositoryName");
+
+        // Assert
+        response.Should().Be(Deleted);
+        entity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_existing_id_true_deletes_returns_Deleted()
+    {
+        // Arrange
+        var analysisId = repository.Find("2", "userName/repositoryName", "Kristian").Id;
+
+        // Act
+        var response = repository.Delete(analysisId, true);
+        var entity = repository.Find("2", "userName/repositoryName", "Kristian");
+
+        // Assert
+        response.Should().Be(Deleted);
+        entity.Should().BeNull();
+    }
+
+    [Fact]
+    public void Delete_given_existing_id_false_returns_Conflict()
+    {
+        // Arrange
+        var analysisId = repository.Find("2", "userName/repositoryName", "Kristian").Id;
+
+        // Act
+        var response = repository.Delete(analysisId);
+        var entity = repository.Find("2", "userName/repositoryName", "Kristian");
+
+        // Assert
+        response.Should().Be(Response.Conflict);
+        entity.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Delete_given_nonExisting_id_returns_NotFound()
+    {
+        // Act
+        var response = repository.Delete(42);
+
+        // Assert
+        response.Should().Be(NotFound);
     }
 
     public DateTime parseStringToDateTime(string date)
