@@ -16,37 +16,11 @@ FluentArgsBuilder.New()
         .IsOptional()
     .Call(mode => repoInfo =>
     {
-        Repository repo;
-        try
-        {
-            repo = new Repository(repoInfo.ToString());
-        }
-        catch (RepositoryNotFoundException ex)
-        {
-            Console.Error.WriteLine(ex.Message);
-            return Task.CompletedTask;
-        }
-
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<Program>()
-            .Build();
-        var connectionString = configuration.GetConnectionString("ConnectionString");
-
-        using var connection = new SqlConnection(connectionString);
-
-        var optionsBuilder = new DbContextOptionsBuilder<GitInsightContext>();
-        optionsBuilder.UseSqlServer(connectionString);
-
-        var options = optionsBuilder.Options;
-
-        using var context = new GitInsightContext(options);
-        context.Database.EnsureCreated();
-        var dBAnalysisRepository = new DBAnalysisRepository(context);
-        var dBFrequencyRepository = new DBFrequencyRepository(context);
+        var DBService = new DBService(repoInfo.ToString());
 
         switch (mode){
             case Mode.Author:
-                var autherfrequiencies = DBService.GetAuthorAnalysis(repo, repoInfo.ToString(), dBAnalysisRepository, dBFrequencyRepository);
+                var autherfrequiencies = DBService.GetAuthorAnalysis();//(repo, repoInfo.ToString(), dBAnalysisRepository, dBFrequencyRepository);
                 
                 Console.WriteLine(autherfrequiencies.Count());
                 foreach (var author in autherfrequiencies)
@@ -59,7 +33,7 @@ FluentArgsBuilder.New()
                 } 
                 break; 
             case Mode.Frequency:
-                foreach (var f in DBService.GetFrequencyAnalysis(repo, repoInfo.ToString(), dBAnalysisRepository, dBFrequencyRepository))
+                foreach (var f in DBService.GetFrequencyAnalysis())//(repo, repoInfo.ToString(), dBAnalysisRepository, dBFrequencyRepository))
                 {
                     Console.WriteLine($"\t{f.Frequency} {f.Date:yyyy-MM-dd}");
                 }

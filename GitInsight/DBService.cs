@@ -2,7 +2,43 @@ using GitInsight.Entities;
 
 public class DBService : IDBService
 {   
-    public static IEnumerable<(string, IEnumerable<DBFrequencyDTO>)> GetAuthorAnalysis(Repository repo, string repoPath, DBAnalysisRepository dBAnalysisRepository, DBFrequencyRepository dBFrequencyRepository)
+    private DBAnalysisRepository dBAnalysisRepository { get; init; }
+    private DBFrequencyRepository dBFrequencyRepository { get; init; }
+    private Repository repo { get; init; }
+    private string repoPath { get; init; }
+    public DBService(string repoPath){
+        Repository repo;
+        try
+        {
+            repo = new Repository(repoPath);
+        }
+        catch (RepositoryNotFoundException ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            throw new NotFoundException("Repository not found");
+        }
+
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<Program>()
+            .Build();
+        var connectionString = configuration.GetConnectionString("ConnectionString");
+
+        using var connection = new SqlConnection(connectionString);
+
+        var optionsBuilder = new DbContextOptionsBuilder<GitInsightContext>();
+        optionsBuilder.UseSqlServer(connectionString);
+
+        var options = optionsBuilder.Options;
+        using var context = new GitInsightContext(options);
+        context.Database.EnsureCreated();
+
+        dBAnalysisRepository = new DBAnalysisRepository(context);
+        dBFrequencyRepository = new DBFrequencyRepository(context);
+        this.repo = new Repository(repoPath);
+        this.repoPath = repoPath;
+    }
+
+    public IEnumerable<(string, IEnumerable<DBFrequencyDTO>)> GetAuthorAnalysis()
     {
         var dbanalysis = dBAnalysisRepository.Find(repo.Commits.First().Id.ToString(), repoPath, repo.Commits.First().Author.Name);
         
@@ -34,7 +70,7 @@ public class DBService : IDBService
         }
     }
 
-    public static IEnumerable<DBFrequencyDTO> GetFrequencyAnalysis(IRepository repo, string repoPath, DBAnalysisRepository dBAnalysisRepository, DBFrequencyRepository dBFrequencyRepository)
+    public IEnumerable<DBFrequencyDTO> GetFrequencyAnalysis()
     {
         var firstcommitid = repo.Commits.First().Id.ToString();
         var dbanalysis = dBAnalysisRepository.Find(firstcommitid, repoPath);
