@@ -12,6 +12,10 @@
     <PackageReference Include="FluentArgs" Version="0.9.7" />
     <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.4" />
@@ -19,5 +23,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GitInsight.Entities\GitInsight.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GitInsight.Core\GitInsight.Core.csproj" />
   </ItemGroup>
 </Project>
