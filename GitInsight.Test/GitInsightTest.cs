@@ -1,6 +1,3 @@
-using System.Globalization;
-using System.Reflection;
-
 namespace GitInsight.Test;
 
 public class GitInsightTest
@@ -72,7 +69,7 @@ public class GitInsightTest
     }
 
     [Fact]
-    public void AuthorMode()
+    public void AuthorExtension()
     {
         // When
         var freq = _commits.AuthorFrequency();
@@ -96,7 +93,7 @@ public class GitInsightTest
     }
 
     [Fact]
-    public void FrequencyMode()
+    public void FrequencyExtension()
     {
         // When
         var freq = _commits.Frequency();

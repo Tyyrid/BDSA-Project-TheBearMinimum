@@ -9,7 +9,7 @@ public class DBFrequencyRepository : IDBFrequencyRepository
         this.context = context;
     }
 
-    public (Response response, int analysisId) Create(DBFrequencyCreateDTO frequency)
+    public (Response, int) Create(DBFrequencyCreateDTO frequency)
     {
         if (context.DBFrequencies.Where(f => f.DBAnalysisId.Equals(frequency.DBAnalysisId)
             && f.Date.Equals(frequency.Date)).Any())
@@ -41,5 +41,48 @@ public class DBFrequencyRepository : IDBFrequencyRepository
                                         fre.Date,
                                         fre.Frequency)).ToList();
         return allFrequencies.AsReadOnly();
+    }
+
+    public Response Update(DBFrequencyUpdateDTO frequency)
+    {
+        var entity = context.DBFrequencies.Where(r => r.Date == frequency.Date && r.DBAnalysisId == frequency.DBAnalysisId).FirstOrDefault();
+
+        if (entity is null) return NotFound;
+        
+        entity.Frequency = frequency.Frequency;
+
+        context.SaveChanges();
+
+        return Updated;
+    }
+
+    public (Response, int?) UpdateOrCreate(DBFrequencyUpdateDTO frequency)
+    {
+        var response = Update(frequency);
+        int? DBAnalysisId = null;
+        
+        if (response != Updated)
+        {
+            (response, DBAnalysisId) = Create(new DBFrequencyCreateDTO(frequency.DBAnalysisId, frequency.Date, frequency.Frequency));
+        }
+
+        return (response, DBAnalysisId);
+    }
+
+    public Response Delete(int Id, DateTime Date)
+    {
+        var entity = context.DBFrequencies.Where(r => r.DBAnalysisId == Id && r.Date == Date).FirstOrDefault();
+
+        if (entity is null) return NotFound;
+
+        context.DBFrequencies.Remove(entity);
+        context.SaveChanges();
+        return Deleted;
+    }
+
+    public IEnumerable<DBFrequencyDTO> FindAll(int analysisId)
+    {
+        return context.DBFrequencies.Where(c => c.DBAnalysisId == analysisId)
+            .Select(c => new DBFrequencyDTO(c.DBAnalysisId, c.Date, c.Frequency));
     }
 }
