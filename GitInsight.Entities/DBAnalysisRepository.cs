@@ -20,7 +20,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
         //Create new DBCommit
         DBAnalysis c = new DBAnalysis(commit.LatestCommitId, commit.Author!, commit.GitRepository);
         //add to context and update database
-        context.DBAnalyses.Add(c);
+        context.DBAnalysis_s.Add(c);
         context.SaveChanges();
         return (Created, c.Id);
     }
@@ -33,7 +33,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
     }
     public DBAnalysisDTO Find(int DBAnalysisId)
     {
-        var commit = context.DBAnalyses.Where(r => r.Id == DBAnalysisId).FirstOrDefault();
+        var commit = context.DBAnalysis_s.Where(r => r.Id == DBAnalysisId).FirstOrDefault();
         if(commit is null) return null!;
         return new DBAnalysisDTO(commit.Id, commit.LatestCommitId, commit.Author, commit.GitRepository);
     }
@@ -51,7 +51,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
     //måske sortere på analysisId?
     public IReadOnlyCollection<DBAnalysisDTO> Read()
     {
-        var commits = from c in context.DBAnalyses
+        var commits = from c in context.DBAnalysis_s
                       orderby c.LatestCommitId
                       select new DBAnalysisDTO(c.Id, c.LatestCommitId, c.Author!, c.GitRepository);
         return commits.ToArray();
