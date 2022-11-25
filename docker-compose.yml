@@ -17,7 +17,6 @@ services:
       - ./:/app
     ports:
       - 8080:8080
-      - 8443:8443
     restart: always
     environment:
       - ASPNETCORE_Kestrel__Certificates__Development__Password="Dev@password"

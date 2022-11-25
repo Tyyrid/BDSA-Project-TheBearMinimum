@@ -19,7 +19,7 @@ public class DBService : IDBService
         }
 
         var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<Program>()
+            .AddUserSecrets<DBService>()
             .Build();
         var connectionString = configuration.GetConnectionString("ConnectionString");
 

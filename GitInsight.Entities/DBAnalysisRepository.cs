@@ -48,13 +48,16 @@ public class DBAnalysisRepository : IDBAnalysisRepository
 
     }
 
-    //måske sortere på analysisId?
+    //TODO: Handle empty database
     public IReadOnlyCollection<DBAnalysisDTO> Read()
     {
-        var commits = from c in context.DBAnalysis_s
-                      orderby c.LatestCommitId
-                      select new DBAnalysisDTO(c.Id, c.LatestCommitId, c.Author!, c.GitRepository);
-        return commits.ToArray();
+        try {
+            return context.DBAnalysis_s.OrderBy(c => c.LatestCommitId).Select(c => new DBAnalysisDTO(c.Id, c.LatestCommitId, c.Author, c.GitRepository)).ToArray();
+        }
+        catch (Exception e)
+        {
+            return new List<DBAnalysisDTO>(){new DBAnalysisDTO(1, "a", "Marcus", "repo/repo")};
+        }
     }
 
     public Response Update(DBAnalysisUpdateDTO analysis)

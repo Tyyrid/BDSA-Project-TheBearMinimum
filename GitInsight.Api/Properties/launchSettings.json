@@ -9,12 +9,12 @@
     }
   },
   "profiles": {
-    "GitInsight.Api": {
+    "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://+:8443;http://+:8080",
+      "applicationUrl": "https://localhost:8443",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
