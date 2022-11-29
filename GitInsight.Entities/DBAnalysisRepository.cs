@@ -17,7 +17,7 @@ public class DBAnalysisRepository : IDBAnalysisRepository
             var existing = Find(commit.LatestCommitId, commit.GitRepository, commit.Author);
             return (Conflict, existing.Id);
         }
-        //Create new DBCommit
+        //Create new DBAnalysis_s
         DBAnalysis c = new DBAnalysis(commit.LatestCommitId, commit.Author!, commit.GitRepository);
         //add to context and update database
         context.DBAnalysis_s.Add(c);

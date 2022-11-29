@@ -2,7 +2,7 @@ namespace GitInsight.Entities;
 
 public class DBFrequency
 {
-    //Date sammen med foreign key fra DBCommit giver en unik key
+    //Date sammen med foreign key fra DBAnalysis_s giver en unik key
 
     //skal referere til primary key hos DBAnalys
     public int DBAnalysisId { get; set; }

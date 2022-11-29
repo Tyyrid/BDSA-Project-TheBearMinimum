@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GitInsight.Entities.Migrations
 {
     [DbContext(typeof(GitInsightContext))]
-    [Migration("20221111133030_RenameDBCommit")]
-    partial class RenameDBCommit
+    [Migration("20221111133030_RenameDBAnalysis_s")]
+    partial class RenameDBAnalysis_s
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,7 @@ namespace GitInsight.Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DBAnalyses");
+                    b.ToTable("DBAnalysis_s");
                 });
 
             modelBuilder.Entity("GitInsight.Entities.DBFrequency", b =>

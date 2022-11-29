@@ -43,7 +43,7 @@ namespace GitInsight.Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DBAnalyses");
+                    b.ToTable("DBAnalysis_s");
                 });
 
             modelBuilder.Entity("GitInsight.Entities.DBFrequency", b =>

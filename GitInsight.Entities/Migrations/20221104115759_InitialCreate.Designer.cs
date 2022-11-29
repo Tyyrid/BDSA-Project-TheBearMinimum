@@ -19,7 +19,7 @@ namespace GitInsight.Entities.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
 
-            modelBuilder.Entity("GitInsight.Entities.DBCommit", b =>
+            modelBuilder.Entity("GitInsight.Entities.DBAnalysis_s", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,12 +37,12 @@ namespace GitInsight.Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DBCommit");
+                    b.ToTable("DBAnalysis_s");
                 });
 
             modelBuilder.Entity("GitInsight.Entities.DBFrequency", b =>
                 {
-                    b.Property<int>("DBCommitId")
+                    b.Property<int>("DBAnalysis_sId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Date")
@@ -51,23 +51,23 @@ namespace GitInsight.Entities.Migrations
                     b.Property<int>("Frequency")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("DBCommitId", "Date");
+                    b.HasKey("DBAnalysis_sId", "Date");
 
                     b.ToTable("DBFrequency");
                 });
 
             modelBuilder.Entity("GitInsight.Entities.DBFrequency", b =>
                 {
-                    b.HasOne("GitInsight.Entities.DBCommit", "DBCommit")
+                    b.HasOne("GitInsight.Entities.DBAnalysis_s", "DBAnalysis_s")
                         .WithMany("Frequencies")
-                        .HasForeignKey("DBCommitId")
+                        .HasForeignKey("DBAnalysis_sId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DBCommit");
+                    b.Navigation("DBAnalysis_s");
                 });
 
-            modelBuilder.Entity("GitInsight.Entities.DBCommit", b =>
+            modelBuilder.Entity("GitInsight.Entities.DBAnalysis_s", b =>
                 {
                     b.Navigation("Frequencies");
                 });

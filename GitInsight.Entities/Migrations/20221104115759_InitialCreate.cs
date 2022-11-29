@@ -10,7 +10,7 @@ namespace GitInsight.Entities.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "DBCommit",
+                name: "DBAnalysis_s",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -21,7 +21,7 @@ namespace GitInsight.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DBCommit", x => x.Id);
+                    table.PrimaryKey("PK_DBAnalysis_s", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -29,16 +29,16 @@ namespace GitInsight.Entities.Migrations
                 columns: table => new
                 {
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DBCommitId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DBAnalysis_sId = table.Column<int>(type: "INTEGER", nullable: false),
                     Frequency = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DBFrequency", x => new { x.DBCommitId, x.Date });
+                    table.PrimaryKey("PK_DBFrequency", x => new { x.DBAnalysis_sId, x.Date });
                     table.ForeignKey(
-                        name: "FK_DBFrequency_DBCommit_DBCommitId",
-                        column: x => x.DBCommitId,
-                        principalTable: "DBCommit",
+                        name: "FK_DBFrequency_DBAnalysis_s_DBAnalysis_sId",
+                        column: x => x.DBAnalysis_sId,
+                        principalTable: "DBAnalysis_s",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -50,7 +50,7 @@ namespace GitInsight.Entities.Migrations
                 name: "DBFrequency");
 
             migrationBuilder.DropTable(
-                name: "DBCommit");
+                name: "DBAnalysis_s");
         }
     }
 }

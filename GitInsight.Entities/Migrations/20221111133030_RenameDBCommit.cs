@@ -6,24 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GitInsight.Entities.Migrations
 {
     /// <inheritdoc />
-    public partial class RenameDBCommit : Migration
+    public partial class RenameDBAnalysis_s : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_DBFrequency_DBCommit_DBCommitId",
+                name: "FK_DBFrequency_DBAnalysis_s_DBAnalysis_sId",
                 table: "DBFrequency");
 
             migrationBuilder.DropTable(
-                name: "DBCommit");
+                name: "DBAnalysis_s");
 
             migrationBuilder.DropPrimaryKey(
                 name: "PK_DBFrequency",
                 table: "DBFrequency");
 
             migrationBuilder.DropColumn(
-                name: "DBCommitId",
+                name: "DBAnalysis_sId",
                 table: "DBFrequency");
 
             migrationBuilder.RenameTable(
@@ -59,7 +59,7 @@ namespace GitInsight.Entities.Migrations
                 columns: new[] { "DBAnalysisId", "Date" });
 
             migrationBuilder.CreateTable(
-                name: "DBAnalyses",
+                name: "DBAnalysis_s",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -70,14 +70,14 @@ namespace GitInsight.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DBAnalyses", x => x.Id);
+                    table.PrimaryKey("PK_DBAnalysis_s", x => x.Id);
                 });
 
             migrationBuilder.AddForeignKey(
-                name: "FK_DBFrequencies_DBAnalyses_DBAnalysisId",
+                name: "FK_DBFrequencies_DBAnalysis_s_DBAnalysisId",
                 table: "DBFrequencies",
                 column: "DBAnalysisId",
-                principalTable: "DBAnalyses",
+                principalTable: "DBAnalysis_s",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
@@ -86,11 +86,11 @@ namespace GitInsight.Entities.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_DBFrequencies_DBAnalyses_DBAnalysisId",
+                name: "FK_DBFrequencies_DBAnalysis_s_DBAnalysisId",
                 table: "DBFrequencies");
 
             migrationBuilder.DropTable(
-                name: "DBAnalyses");
+                name: "DBAnalysis_s");
 
             migrationBuilder.DropPrimaryKey(
                 name: "PK_DBFrequencies",
@@ -121,7 +121,7 @@ namespace GitInsight.Entities.Migrations
                 oldType: "datetime2");
 
             migrationBuilder.AddColumn<int>(
-                name: "DBCommitId",
+                name: "DBAnalysis_sId",
                 table: "DBFrequency",
                 type: "INTEGER",
                 nullable: false,
@@ -130,10 +130,10 @@ namespace GitInsight.Entities.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_DBFrequency",
                 table: "DBFrequency",
-                columns: new[] { "DBCommitId", "Date" });
+                columns: new[] { "DBAnalysis_sId", "Date" });
 
             migrationBuilder.CreateTable(
-                name: "DBCommit",
+                name: "DBAnalysis_s",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false),
@@ -143,14 +143,14 @@ namespace GitInsight.Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DBCommit", x => x.Id);
+                    table.PrimaryKey("PK_DBAnalysis_s", x => x.Id);
                 });
 
             migrationBuilder.AddForeignKey(
-                name: "FK_DBFrequency_DBCommit_DBCommitId",
+                name: "FK_DBFrequency_DBAnalysis_s_DBAnalysis_sId",
                 table: "DBFrequency",
-                column: "DBCommitId",
-                principalTable: "DBCommit",
+                column: "DBAnalysis_sId",
+                principalTable: "DBAnalysis_s",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
