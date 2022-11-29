@@ -8,7 +8,7 @@ services:
       - ACCEPT_EULA=1
       - MSSQL_SA_PASSWORD=Dev@password
     ports:
-      - 1433:1433
+      - 1431:1431
     restart: always
   api:
     container_name: GitInsight-api
@@ -16,7 +16,8 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 8080:8080
+      - 8090:8090
+      - 8443:8443
     restart: always
     environment:
       - ASPNETCORE_Kestrel__Certificates__Development__Password="Dev@password"
