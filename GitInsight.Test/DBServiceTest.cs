@@ -10,6 +10,7 @@ public class DBServiceTest : IDisposable
     private readonly DBAnalysisRepository Analysisrepository;
     private readonly DBFrequencyRepository frequencyRepository;
     private readonly IRepository gitrepo;
+    private readonly DBService dBService;
     public DBServiceTest(){
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
@@ -33,8 +34,6 @@ public class DBServiceTest : IDisposable
         context = _context;
         Analysisrepository = new DBAnalysisRepository(context);
         frequencyRepository = new DBFrequencyRepository(context);
-
-
          _commits = MockCommits(new[] {
             ("Hannah", "2022-10-27"),
             ("Hannah", "2022-10-28"),
@@ -56,6 +55,10 @@ public class DBServiceTest : IDisposable
         var gitrepo = Substitute.For<IRepository>();
         gitrepo.Commits.Returns(_commits);
         this.gitrepo = gitrepo;
+        var repoPath = "repo/path";
+        var dbService = Substitute.For<DBService>();
+        dbService.getRepositories(repoPath).Returns((repoPath, gitrepo, Analysisrepository, frequencyRepository));
+        this.dBService = dbService;
     }
     
     private MockCommitLog MockCommits(IEnumerable<(string Author, string When)> mocks)
@@ -76,11 +79,11 @@ public class DBServiceTest : IDisposable
     [Fact]
     public void FrequencyMode()
     {
-       /* var something = DBService.GetFrequencyAnalysis(gitrepo, "NotInDatabase", Analysisrepository, frequencyRepository);
+       var something = dBService.GetFrequencyAnalysis();
        something.Should().BeEquivalentTo(new DBFrequencyDTO[]{new DBFrequencyDTO(4, new DateTime(2022, 10, 27), 1), 
                 new DBFrequencyDTO(4, new DateTime(2022, 10, 28), 9),
                 new DBFrequencyDTO(4, new DateTime(2022, 10, 29), 3),
-                new DBFrequencyDTO(4, new DateTime(2022, 10, 31), 1)}); */
+                new DBFrequencyDTO(4, new DateTime(2022, 10, 31), 1)}); 
     }
 
     [Fact]

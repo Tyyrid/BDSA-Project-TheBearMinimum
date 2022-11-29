@@ -7,35 +7,11 @@ public class DBService : IDBService
     private Repository repo { get; init; }
     private string repoPath { get; init; }
     public DBService(string repoPath){
-        Repository repo;
-        try
-        {
-            repo = new Repository(repoPath);
-        }
-        catch (RepositoryNotFoundException ex)
-        {
-            Console.Error.WriteLine(ex.Message);
-            throw new NotFoundException("Repository not found");
-        }
+        (this.repoPath, this.repo, this.dBAnalysisRepository, this.dBFrequencyRepository) = getRepositories(repoPath);
+    }
 
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<DBService>()
-            .Build();
-        var connectionString = configuration.GetConnectionString("ConnectionString");
-
-        using var connection = new SqlConnection(connectionString);
-
-        var optionsBuilder = new DbContextOptionsBuilder<GitInsightContext>();
-        optionsBuilder.UseSqlServer(connectionString);
-
-        var options = optionsBuilder.Options;
-        using var context = new GitInsightContext(options);
-        context.Database.EnsureCreated();
-
-        dBAnalysisRepository = new DBAnalysisRepository(context);
-        dBFrequencyRepository = new DBFrequencyRepository(context);
-        this.repo = new Repository(repoPath);
-        this.repoPath = repoPath;
+    public DBService(){
+        (this.repoPath, this.repo, this.dBAnalysisRepository, this.dBFrequencyRepository) = getRepositories("this is a fake method");
     }
 
     public IEnumerable<(string, IEnumerable<DBFrequencyDTO>)> GetAuthorAnalysis()
@@ -86,5 +62,33 @@ public class DBService : IDBService
                 }else{
                     return dBFrequencyRepository.FindAll(dbanalysis.Id);
                 }
+    }
+
+    public (string, Repository, DBAnalysisRepository, DBFrequencyRepository) getRepositories(String repoPath){
+        Repository repo;
+        try
+        {
+            repo = new Repository(repoPath);
+        }
+        catch (RepositoryNotFoundException ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            throw new NotFoundException("Repository not found");
+        }
+
+        var configuration = new ConfigurationBuilder()
+            .AddUserSecrets<DBService>()
+            .Build();
+        var connectionString = configuration.GetConnectionString("ConnectionString");
+
+        using var connection = new SqlConnection(connectionString);
+
+        var optionsBuilder = new DbContextOptionsBuilder<GitInsightContext>();
+        optionsBuilder.UseSqlServer(connectionString);
+
+        var options = optionsBuilder.Options;
+        using var context = new GitInsightContext(options);
+        context.Database.EnsureCreated();
+        return (repoPath, new Repository(repoPath), new DBAnalysisRepository(context), new DBFrequencyRepository(context));
     }
 }
